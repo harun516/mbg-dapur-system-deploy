@@ -1,0 +1,106 @@
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './sidebar.css';
+@import 'gudang/penerimaan-barang.css';
+@import 'dapur/index-stok-dapur.css';
+@import 'dapur/menu/menu.css';
+@import 'gudang/item/item.css';
+@import 'gudang/request/request.css';
+
+
+/*================= admin =============== */
+
+
+/* CARD DASHBOARD (VERSI FINAL - BIRU-PUTIH COMPACT) */
+.card-dashboard {
+    border: none;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+    transition: all 0.28s ease;
+    overflow: hidden;
+    height: 100%;
+}
+
+.card-dashboard:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14) !important;
+}
+
+/* Border kiri tipis & soft (warna per card) */
+.card-accent-left {
+    border-left: 4px solid;
+}
+
+/* Icon lebih kecil & elegan */
+.card-icon {
+    font-size: 2.6rem;
+    margin-bottom: 1rem;
+    opacity: 0.88;
+}
+
+/* Judul card */
+.card-title {
+    font-size: 1.05rem;
+    color: #4b5563;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+}
+
+/* Nilai utama (angka) */
+.card-value {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #1e40af; /* biru gelap utama */
+    line-height: 1.1;
+}
+
+/* Deskripsi kecil */
+.card-desc {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+/* Warna accent per card (soft & match Bootstrap) */
+.card-danger   { border-left-color: #ef4444; } /* merah soft */
+.card-success  { border-left-color: #10b981; } /* hijau emerald */
+.card-info     { border-left-color: #0ea5e9; } /* biru cyan */
+.card-warning  { border-left-color: #f59e0b; } /* kuning amber */
+.card-primary  { border-left-color: #3b82f6; } /* biru untuk total pengguna */
+
+/* Quick Links Button */
+.btn-dashboard-outline {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 1.25rem 1rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-dashboard-outline:hover {
+    background-color: #3b82f6;
+    color: white;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+}
+
+/* Responsive: lebih kecil di mobile */
+@media (max-width: 992px) {
+    .card-dashboard .card-body { padding: 1.75rem 1.25rem !important; }
+    .card-icon { font-size: 2.4rem; }
+    .card-value { font-size: 2.4rem; }
+    .card-title { font-size: 1rem; }
+}
+
+/* ==========GUDANG========== */
+/* CARD DASHBOARD (VERSI FINAL - BIRU-PUTIH COMPACT) */

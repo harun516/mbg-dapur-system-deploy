@@ -1,0 +1,106 @@
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; }
+        .container-table { max-width: 1400px; margin: 40px auto; padding: 30px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        h2 { font-size: 24px; margin-bottom: 24px; color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .table { border-collapse: collapse; width: 100%; margin-bottom: 0; }
+        .table thead th {
+            background-color: #007bff;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px 8px;
+            border: 1px solid #dee2e6;
+            text-transform: uppercase;
+            font-size: 0.82rem;
+            letter-spacing: 0.4px;
+            vertical-align: middle;
+        }
+        .table tbody td {
+            padding: 12px 8px;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
+            font-size: 0.92rem;
+        }
+        .table tbody tr:hover { background-color: #f8fbff; }
+        .table tbody tr:nth-child(even) { background-color: #f9fcff; }
+
+        /* Ukuran kolom proporsional & lebih ringan */
+        .col-no { width: 16%; }
+        .col-tgl { width: 14%; }
+        .col-status { width: 16%; text-align: center; }
+        .col-detail { width: 38%; }
+        .col-aksi { width: 16%; text-align: center; }
+
+        /* Badge status lebih soft & minimalis */
+        .badge-status {
+            padding: 0.35em 0.75em;
+            font-size: 0.78rem;
+            font-weight: 500;
+            border-radius: 1rem;
+        }
+        .badge-pending { background-color: #fff3cd; color: #856404; }
+        .badge-approved { background-color: #d4edda; color: #155724; }
+        .badge-finished { background-color: #e2e3e5; color: #383d41; }
+
+        /* Tombol aksi lebih elegan & tidak sakit mata */
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            transition: all 0.25s ease;
+        }
+        .btn-approve {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        .btn-approve:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+        .btn-disabled {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Detail permintaan pakai badge kecil & wrap */
+        .detail-badge {
+            display: inline-block;
+            background: #f1f3f5;
+            border-radius: 4px;
+            padding: 3px 8px;
+            margin: 2px 4px 2px 0;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+        .detail-badge strong { color: #007bff; font-weight: 600; }
+
+        /* Responsive card mode */
+        @media (max-width: 992px) {
+            .container-table { margin: 20px 10px; padding: 20px; }
+            h2 { font-size: 20px; }
+            .table thead { display: none; }
+            .table tbody tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                background: #fff;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            }
+            .table tbody td {
+                display: flex;
+                justify-content: space-between;
+                border: none;
+                border-bottom: 1px solid #eee;
+                padding: 12px 16px;
+            }
+            .table tbody td:last-child { border-bottom: none; justify-content: center; padding: 16px; background: #f8f9fa; }
+            .table tbody td::before { content: attr(data-label); font-weight: 600; color: #495057; flex: 0 0 45%; margin-right: 12px; }
+            .detail-badge { font-size: 0.8rem; padding: 3px 6px; margin: 2px; }
+            .col-no, .col-tgl, .col-status, .col-detail, .col-aksi { width: 100% !important; }
+            .d-flex.justify-content-between { flex-direction: column; gap: 12px; }
+            .btn-action { width: 100%; margin: 6px 0; }
+        }
