@@ -9,6 +9,9 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\RequestController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\BudgetController;
+use App\Http\Controllers\Admin\SalaryController;
+use App\http\Controllers\Gudang\GudangSaldoController;
 
 // ==================== ROOT & AUTH ==================== //
 Route::get('/', function () {
@@ -41,9 +44,21 @@ Route::middleware(['auth'])->group(function () {
 
     // --- ADMIN ---
     Route::middleware('role:admin')->prefix('admin')->group(function () {
-        Route::get('/', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
+        Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    // Budget
+        Route::get('/budget', [BudgetController::class, 'index'])->name('admin.budget.index');
+        Route::post('/budget', [BudgetController::class, 'store'])->name('admin.budget.store');
+        Route::post('/admin/budget/allocation', [BudgetController::class, 'storeAllocation'])->name('admin.budget.allocation');
+        Route::delete('/admin/budget/allocation/{id}', [BudgetController::class, 'destroyAllocation'])->name('admin.budget.destroyAllocation');
+        Route::get('/budget/requests', [BudgetController::class, 'requestIndex'])->name('budget.requests');
+        Route::post('/budget/requests/{id}/action', [BudgetController::class, 'handleRequest'])->name('budget.requests.action');
+
+    // Salary
+        Route::get('/salary', [SalaryController::class, 'index'])->name('salary.index');
+        Route::post('/salary/config', [SalaryController::class, 'storeConfig'])->name('salary.storeConfig');
+        Route::put('/salary/config/{id}', [SalaryController::class, 'updateConfig'])->name('salary.updateConfig');
+        Route::delete('/salary/config/{id}', [SalaryController::class, 'destroyConfig'])->name('salary.destroyConfig');
+        Route::post('/salary/payment', [SalaryController::class, 'processPayment'])->name('salary.payment');
     });
 
     // --- GUDANG ---
@@ -60,6 +75,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/stok-opname', [ItemBatchController::class, 'opnameIndex'])->name('stok.opname.index');
         Route::post('/stok-opname/{id}', [ItemBatchController::class, 'processOpname'])->name('stok.opname.process');
 
+        // Saldo Anggaran
+            Route::middleware(['auth', 'role:gudang'])->prefix('gudang')->name('gudang.')->group(function () {
+            Route::get('/saldo', [GudangSaldoController::class, 'index'])->name('saldo.index');
+            Route::post('/saldo/request', [GudangSaldoController::class, 'storeRequest'])->name('saldo.request');
+        });
         // Penerimaan Barang
         Route::get('/penerimaan', [PenerimaanController::class, 'index'])->name('penerimaan.index');
         Route::get('/penerimaan/input', [PenerimaanController::class, 'create'])->name('penerimaan.input');

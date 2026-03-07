@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 @import './sidebar.css';
+@import './auth.css';
 @import 'gudang/penerimaan-barang.css';
 @import 'dapur/index-stok-dapur.css';
 @import 'dapur/menu/menu.css';
@@ -11,10 +12,8 @@
 @import 'gudang/request/request.css';
 
 
-/*================= admin =============== */
 
-
-/* CARD DASHBOARD (VERSI FINAL - BIRU-PUTIH COMPACT) */
+/* === SHARED DASHBOARD CARD STYLE (Digunakan semua role) === */
 .card-dashboard {
     border: none;
     border-radius: 14px;
@@ -30,19 +29,16 @@
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14) !important;
 }
 
-/* Border kiri tipis & soft (warna per card) */
 .card-accent-left {
     border-left: 4px solid;
 }
 
-/* Icon lebih kecil & elegan */
 .card-icon {
     font-size: 2.6rem;
     margin-bottom: 1rem;
     opacity: 0.88;
 }
 
-/* Judul card */
 .card-title {
     font-size: 1.05rem;
     color: #4b5563;
@@ -50,29 +46,27 @@
     font-weight: 500;
 }
 
-/* Nilai utama (angka) */
 .card-value {
     font-size: 2.8rem;
     font-weight: 800;
-    color: #1e40af; /* biru gelap utama */
+    color: #1e40af;
     line-height: 1.1;
 }
 
-/* Deskripsi kecil */
 .card-desc {
     font-size: 0.875rem;
     color: #6b7280;
     margin-top: 0.25rem;
 }
 
-/* Warna accent per card (soft & match Bootstrap) */
-.card-danger   { border-left-color: #ef4444; } /* merah soft */
-.card-success  { border-left-color: #10b981; } /* hijau emerald */
-.card-info     { border-left-color: #0ea5e9; } /* biru cyan */
-.card-warning  { border-left-color: #f59e0b; } /* kuning amber */
-.card-primary  { border-left-color: #3b82f6; } /* biru untuk total pengguna */
+/* Accent warna per jenis card */
+.card-primary   { border-left-color: #3b82f6; }
+.card-danger    { border-left-color: #ef4444; }
+.card-warning   { border-left-color: #f59e0b; }
+.card-success   { border-left-color: #10b981; }
+.card-info      { border-left-color: #0ea5e9; }
 
-/* Quick Links Button */
+/* Quick links button (digunakan di semua dashboard) */
 .btn-dashboard-outline {
     border-color: #3b82f6;
     color: #3b82f6;
@@ -94,13 +88,422 @@
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
 }
 
-/* Responsive: lebih kecil di mobile */
-@media (max-width: 992px) {
-    .card-dashboard .card-body { padding: 1.75rem 1.25rem !important; }
-    .card-icon { font-size: 2.4rem; }
-    .card-value { font-size: 2.4rem; }
-    .card-title { font-size: 1rem; }
+/* === STYLE KHUSUS ADMIN DASHBOARD === */
+.admin-header-date {
+    font-size: 0.9rem;
+    background: #f1f5f9;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid #e5e7eb;
 }
 
-/* ==========GUDANG========== */
-/* CARD DASHBOARD (VERSI FINAL - BIRU-PUTIH COMPACT) */
+.admin-budget-card {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.admin-budget-gradient {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    padding: 2.5rem;
+}
+
+.admin-progress {
+    height: 10px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 5px;
+}
+
+.admin-progress-bar {
+    background: white;
+    height: 100%;
+    border-radius: 5px;
+}
+
+/* Responsive penyesuaian */
+@media (max-width: 992px) {
+    .card-dashboard .card-body { padding: 1.5rem !important; }
+    .card-icon { font-size: 2.4rem; }
+    .card-value { font-size: 2.4rem; }
+    .admin-budget-gradient { padding: 2rem; }
+}
+
+ /* === PENYESUAIAN HALAMAN KELOLA ANGGARAN (MODUL ANGGARAN) === */
+
+/* Container utama */
+.anggaran-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Header halaman */
+.anggaran-header h1 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #1f2937;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+}
+
+.anggaran-header p {
+    font-size: 1rem;
+    color: #6b7280;
+    font-weight: 400;
+}
+
+/* Card Saldo Utama (Gradient) */
+.anggaran-saldo-card {
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    box-shadow: 0 10px 30px rgba(78, 115, 223, 0.25);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.anggaran-saldo-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 45px rgba(78, 115, 223, 0.4);
+}
+
+/* Ikon wallet di background transparan */
+.anggaran-saldo-card::before {
+    content: '\f555'; /* fa-wallet */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    font-size: 15rem;
+    opacity: 0.08;
+    color: white;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.anggaran-saldo-value {
+    font-size: 3.8rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Progress bar di card saldo */
+.admin-progress {
+    height: 12px;
+    background: rgba(255,255,255,0.22);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.admin-progress-bar {
+    background: white;
+    box-shadow: 0 0 12px rgba(255,255,255,0.6);
+    border-radius: 20px;
+    transition: width 0.6s ease;
+}
+
+/* Card Saldo Gudang & Dana Dialokasikan */
+.card[style*="background: linear-gradient"] {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.card[style*="background: linear-gradient"]:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 35px rgba(0,0,0,0.2);
+}
+
+/* Tabel Alokasi & Riwayat */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.table thead th {
+    background: #f8fafc;
+    color: #374151;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 12px 16px;
+    border: none;
+}
+
+.table tbody td {
+    background: white;
+    padding: 16px;
+    border: none;
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+.table tbody tr {
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    transition: all 0.25s ease;
+}
+
+.table tbody tr:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Tombol Aksi Hapus Alokasi */
+.btn-light.text-danger.rounded-circle {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.btn-light.text-danger.rounded-circle:hover {
+    background: #fee2e2 !important;
+    color: #dc3545 !important;
+}
+
+/* Modal Tambah Anggaran */
+.modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+}
+
+.modal-header {
+    border-bottom: none;
+    padding: 1.5rem 1.5rem 0;
+}
+
+.modal-title {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.modal-body .form-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.modal-body .form-control,
+.modal-body .form-select {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .anggaran-saldo-value { font-size: 2.8rem; }
+    .card-body { padding: 1.5rem !important; }
+    .table th, .table td { padding: 12px !important; font-size: 0.9rem !important; }
+}
+
+
+/* === PENYESUAIAN KHUSUS HALAMAN MANAJEMEN GAJI & PAYROLL === */
+
+/* Tab Navigation (lebih modern & kontras) */
+.nav-pills .nav-link {
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    background: white;
+    transition: all 0.25s ease;
+}
+
+.nav-pills .nav-link.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: #3b82f6;
+}
+
+/* Card Umum di Halaman Ini */
+.card {
+    border: none !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07) !important;
+    transition: all 0.3s ease !important;
+}
+
+.card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14) !important;
+}
+
+/* Header Card */
+.card-header {
+    background: white !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 1rem 1.25rem !important;
+}
+
+.card-header h6 {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+}
+
+/* Form di Card */
+.card-body form .form-label {
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.card-body .form-control,
+.card-body .form-select {
+    background: #f8fafc !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1rem !important;
+    transition: border-color 0.3s ease !important;
+}
+
+.card-body .form-control:focus,
+.card-body .form-select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Tabel Riwayat & Konfigurasi (hover per baris lebih terasa) */
+.table {
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
+}
+
+.table thead th {
+    background: #f8fafc !important;
+    color: #374151 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.85rem !important;
+    padding: 12px 16px !important;
+    border: none !important;
+}
+
+.table tbody td {
+    background: white !important;
+    padding: 16px !important;
+    border: none !important;
+    vertical-align: middle !important;
+    font-size: 0.95rem !important;
+}
+
+.table tbody tr {
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+    transition: all 0.25s ease !important;
+}
+
+.table tbody tr:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+}
+
+/* Tombol Aksi di Tabel Konfigurasi */
+.btn-sm.btn-outline-warning,
+.btn-sm.btn-outline-danger {
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.875rem !important;
+    border-radius: 6px !important;
+    transition: all 0.25s ease !important;
+}
+
+.btn-sm.btn-outline-warning:hover {
+    background: #f59e0b !important;
+    color: white !important;
+    border-color: #f59e0b !important;
+}
+
+.btn-sm.btn-outline-danger:hover {
+    background: #ef4444 !important;
+    color: white !important;
+    border-color: #ef4444 !important;
+}
+
+/* Modal Edit */
+.modal-content {
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.modal-header {
+    border-bottom: none !important;
+    padding: 1.5rem 1.5rem 0 !important;
+}
+
+.modal-title {
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+}
+
+/* Responsive Mobile */
+@media (max-width: 992px) {
+    .card-body { padding: 1.5rem !important; }
+    .table th, .table td { padding: 12px !important; font-size: 0.9rem !important; }
+    .nav-pills .nav-link { padding: 0.6rem 1rem !important; font-size: 0.9rem !important; }
+}
+
+/* === STYLE HALAMAN LOGIN - PREMIUM & CLEAN === */
+
+.min-vh-100 {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+}
+
+.card.shadow-lg {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25) !important;
+    transition: transform 0.3s ease;
+}
+
+.card.shadow-lg:hover {
+    transform: translateY(-5px);
+}
+
+.form-control-lg {
+    font-size: 1.1rem;
+    padding: 0.9rem 1.25rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control-lg:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+}
+
+.btn-lg {
+    font-size: 1.15rem;
+    padding: 0.9rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .card-body { padding: 2rem 1.5rem !important; }
+    .card.shadow-lg { margin: 1rem !important; }
+}
+
+
+

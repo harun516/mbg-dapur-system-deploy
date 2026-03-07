@@ -18,6 +18,13 @@
                 <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('dashboard') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('dashboard') }}">
                     <i class="fas fa-tachometer-alt me-3 fs-5"></i> Dashboard
                 </a>
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('gudang.saldo.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('gudang.saldo.index') }}">
+                        <i class="fas fa-credit-card me-3 fs-5"></i> Saldo Anggaran
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('item.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('item.index') }}">
                         <i class="fas fa-boxes me-3 fs-5"></i> Master Barang
@@ -44,7 +51,7 @@
             @endif
         <!====================================== ROLE DAPUR =====================================>
 
-            @if(in_array(auth()->user()->role, ['admin', 'dapur']))
+            @if(in_array(auth()->user()->role, ['dapur']))
                 <div class="text-muted small fw-bold text-uppercase mt-3 mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">Operasional Dapur</div>
                 <li class="nav-item">
                     <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('dapur.dashboard') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('dapur.dashboard') }}">
@@ -53,6 +60,7 @@
                  <div class="text-muted small fw-bold text-uppercase mt-3 mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">Managemen Dapur</div>
                 <li class="nav-item">
                 </li>
+                
                  <li class="nav-item">
                     <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('production.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('production.index') }}">
                         <i class="fas fa-bar-chart me-3 fs-5"></i> Produksi
@@ -78,7 +86,7 @@
                 </li>
             @endif
         <!====================================== ROLE KURIR =====================================>
-            @if(in_array(auth()->user()->role, ['admin', 'kurir']))
+            @if(in_array(auth()->user()->role, ['kurir']))
                 <div class="text-muted small fw-bold text-uppercase mt-3 mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">Logistik</div>
                 <li class="nav-item">
                     <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('kurir.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('kurir.dashboard') }}">
@@ -90,8 +98,14 @@
 
         <!====================================== ROLE ADMIN =====================================>
             @if(in_array(auth()->user()->role, ['admin']))
-                <div class="text-muted small fw-bold text-uppercase mt-3 mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">Manajemen Gudang</div>
                 
+            <div class="text-muted small fw-bold text-uppercase mt-3 mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">Manajemen Admin</div>
+                
+            <li class="nav-item">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.dashboard') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('admin.dashboard') }}">
+                        <i class="fas fa-tachometer-alt me-3 fs-5"></i> Dashboard Admin
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('item.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('item.index') }}">
                         <i class="fas fa-users me-3 fs-5"></i> Kelola User
@@ -111,8 +125,14 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('gudang.request.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('gudang.request.index') }}">
-                        <i class="fas fa-clipboard-list me-3 fs-5"></i> Permintaan Dapur
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.salary.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('salary.index') }}">
+                        <i class="fas fa-credit-card me-3 fs-5"></i> Salary Management
+                    </a>
+                </li>
+
+                 <li class="nav-item">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.budget.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('admin.budget.index') }}">
+                        <i class="fas fa fa-balance-scale me-3 fs-5"></i> Budget Management
                     </a>
                 </li>
             @endif

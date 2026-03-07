@@ -1,7 +1,7 @@
+<x-app-layout>
 <form action="{{ route('penerimaan.store') }}" method="POST" id="formPenerimaan">
     @csrf
-
-    <style>
+      <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
@@ -202,7 +202,6 @@
             }
         }
     </style>
-
     <div class="container-form">
         <h2>Form Penerimaan Barang</h2>
 
@@ -362,3 +361,4 @@
         });
     </script>
 </form>
+</x-app-layout>

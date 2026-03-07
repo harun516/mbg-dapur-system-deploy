@@ -1,0 +1,283 @@
+/* === LOGIN / REGISTER PAGE - TEMA MBG DAPUR (BIRU-PUTIH PREMIUM) === */
+/* Background utama putih, biru hanya di lengkungan */
+
+:root {
+    --primary-color: #3b82f6;       /* Biru utama */
+    --secondary-color: #1e40af;     /* Biru gelap untuk wave */
+    --light-primary: #60a5fa;
+    --dark-primary: #1e40af;
+    --black: #000000;
+    --white: #ffffff;
+    --gray: #f8fafc;
+    --gray-2: #64748b;
+}
+
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100vh;
+    overflow: hidden;
+    background: var(--gray); /* Background utama PUTIH/ABU-ABU SOFT */
+}
+
+.container {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background: var(--gray);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100vh;
+}
+
+.col {
+    width: 50%;
+    transition: all 0.5s ease-in-out;
+}
+
+.align-items-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 480px; /* Lebih lebar biar form tidak terkurung */
+    padding: 2rem;
+}
+
+.form {
+    padding: 2.5rem 2rem;
+    background: var(--white);
+    border-radius: 1.5rem;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    transform: scale(0);
+    transition: .6s ease-in-out;
+    transition-delay: 0.8s;
+}
+
+/* Input group - sesuaikan select role agar match */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+.input-group i {
+    position: absolute;
+    top: 50%;
+    left: 1.2rem;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    color: var(--gray-2);
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3.2rem;
+    font-size: 1rem;
+    background: var(--gray);
+    border-radius: 0.75rem;
+    border: 1px solid var(--gray);
+    outline: none;
+    transition: all 0.3s ease;
+    appearance: none; /* Hapus default arrow select */
+}
+
+.input-group select {
+    padding-right: 3rem; /* Ruang untuk icon panah custom */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2rem;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15);
+}
+
+.form button {
+    cursor: pointer;
+    width: 100%;
+    padding: 0.9rem 0;
+    border-radius: 0.75rem;
+    border: none;
+    background: var(--primary-color);
+    color: var(--white);
+    font-size: 1.15rem;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form button:hover {
+    background: var(--dark-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+}
+
+.form p {
+    margin: 1.2rem 0;
+    font-size: 0.9rem;
+    color: var(--gray-2);
+}
+
+.pointer {
+    cursor: pointer;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.pointer:hover {
+    color: var(--dark-primary);
+}
+
+/* Animasi toggle tetap */
+.container.sign-in .form.sign-in,
+.container.sign-in .social-list.sign-in,
+.container.sign-in .social-list.sign-in > div,
+.container.sign-up .form.sign-up,
+.container.sign-up .social-list.sign-up,
+.container.sign-up .social-list.sign-up > div {
+    transform: scale(1);
+}
+
+/* Background lengkungan biru (hanya di samping, bukan full) */
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 300vw;
+    transform: translate(35%, 0);
+    background-image: linear-gradient(-45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    transition: 1s ease-in-out;
+    z-index: 6;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 10px 30px;
+    border-bottom-right-radius: max(50vw, 50vh);
+    border-top-left-radius: max(50vw, 50vh);
+}
+
+.container.sign-in::before {
+    transform: translate(0, 0);
+    right: 50%;
+}
+
+.container.sign-up::before {
+    transform: translate(100%, 0);
+    right: 50%;
+}
+
+/* Content Section (teks sambutan) */
+.content-row {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 6;
+    width: 100%;
+}
+
+.text {
+    margin: 4rem;
+    color: var(--white);
+}
+
+.text h2 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 2rem 0;
+    transition: 1s ease-in-out;
+}
+
+.text p {
+    font-weight: 600;
+    transition: 1s ease-in-out;
+    transition-delay: .2s;
+}
+
+.img img {
+    width: 30vw;
+    transition: 1s ease-in-out;
+    transition-delay: .4s;
+}
+
+.text.sign-in h2,
+.text.sign-in p,
+.img.sign-in img {
+    transform: translateX(-250%);
+}
+
+.text.sign-up h2,
+.text.sign-up p,
+.img.sign-up img {
+    transform: translateX(250%);
+}
+
+.container.sign-in .text.sign-in h2,
+.container.sign-in .text.sign-in p,
+.container.sign-in .img.sign-in img,
+.container.sign-up .text.sign-up h2,
+.container.sign-up .text.sign-up p,
+.container.sign-up .img.sign-up img {
+    transform: translateX(0);
+}
+
+/* Responsive Mobile */
+@media only screen and (max-width: 425px) {
+    .container::before,
+    .container.sign-in::before,
+    .container.sign-up::before {
+        height: 100vh;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 0;
+        z-index: 0;
+        transform: none;
+        right: 0;
+    }
+    .col {
+        width: 100%;
+        position: absolute;
+        padding: 2rem;
+        background: var(--white);
+        border-top-left-radius: 2rem;
+        border-top-right-radius: 2rem;
+        transform: translateY(100%);
+        transition: 1s ease-in-out;
+    }
+    .row {
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+    .form,
+    .social-list {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+    .text {
+        margin: 0;
+    }
+    .text p {
+        display: none;
+    }
+    .text h2 {
+        margin: .5rem;
+        font-size: 2rem;
+    }
+}
