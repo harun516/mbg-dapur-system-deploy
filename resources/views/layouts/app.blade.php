@@ -15,7 +15,8 @@
     window.successMessage = "{{ session('success') }}";
     window.errorMessage = "{{ session('error') }}";
 </script>
-  @vite(['resources/css/app.css', 'resources/css/sidebar.css',
+  @vite(['resources/css/app.css', 
+         'resources/css/sidebar.css',
          'resources/css/gudang/penerimaan-barang.css',
          'resources/css/dapur/index-stok-dapur.css', 
          'resources/css/dapur/menu/menu.css',

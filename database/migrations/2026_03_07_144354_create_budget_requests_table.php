@@ -10,12 +10,19 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('budget_requests', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('budget_requests', function (Blueprint $table) {
+        $table->id();
+        $table->string('perihal'); // Untuk judul permintaan
+        $table->decimal('nominal', 15, 2);
+        $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+        $table->string('status')->default('pending'); 
+        $table->boolean('is_enable')->default(true);
+        
+        $table->text('catatan')->nullable(); // Opsional untuk alasan approve/reject
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.

@@ -43,15 +43,20 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // --- ADMIN ---
-    Route::middleware('role:admin')->prefix('admin')->group(function () {
-        Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    // Budget
-        Route::get('/budget', [BudgetController::class, 'index'])->name('admin.budget.index');
-        Route::post('/budget', [BudgetController::class, 'store'])->name('admin.budget.store');
-        Route::post('/admin/budget/allocation', [BudgetController::class, 'storeAllocation'])->name('admin.budget.allocation');
-        Route::delete('/admin/budget/allocation/{id}', [BudgetController::class, 'destroyAllocation'])->name('admin.budget.destroyAllocation');
-        Route::get('/budget/requests', [BudgetController::class, 'requestIndex'])->name('budget.requests');
-        Route::post('/budget/requests/{id}/action', [BudgetController::class, 'handleRequest'])->name('budget.requests.action');
+    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    // Budget Management
+    Route::get('/budget', [BudgetController::class, 'index'])->name('budget.index');
+    Route::post('/budget', [BudgetController::class, 'store'])->name('budget.store');
+
+    // Allocation
+    Route::post('/budget/allocation', [BudgetController::class, 'storeAllocation'])->name('budget.allocation');
+    Route::delete('/budget/allocation/{id}', [BudgetController::class, 'destroyAllocation'])->name('budget.destroyAllocation');
+
+    // Budget Requests (Gudang ke Admin) - SEKARANG JADI admin.budget.request
+    Route::get('/budget/request', [BudgetController::class, 'requestIndex'])->name('budget.request');
+    Route::post('/budget/request/approve/{id}', [BudgetController::class, 'approveRequest'])->name('budget.approve');
 
     // Salary
         Route::get('/salary', [SalaryController::class, 'index'])->name('salary.index');

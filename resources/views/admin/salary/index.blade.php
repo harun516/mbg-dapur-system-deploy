@@ -45,7 +45,7 @@
                     <h6 class="m-0 fw-bold text-dark"><i class="fas fa-money-check-alt me-2"></i>Form Pembayaran Gaji Pegawai</h6>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('salary.payment') }}" method="POST">
+                    <form action="{{ route('admin.salary.index') }}" method="POST">
                         @csrf
                         <div class="row g-3">
                             <div class="col-md-4">
@@ -86,7 +86,7 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <h6 class="m-0 fw-bold text-dark"><i class="fas fa-history me-2"></i>Riwayat Pembayaran Gaji</h6>
-                    <form action="{{ route('salary.index') }}" method="GET" class="d-flex align-items-center gap-2">
+                    <form action="{{ route('admin.salary.index') }}" method="GET" class="d-flex align-items-center gap-2">
                         <select name="periode" class="form-select form-select-sm bg-light border-0" onchange="this.form.submit()">
                             <option value="">Semua Periode</option>
                             @php $currentYear = date('Y'); @endphp
@@ -142,7 +142,7 @@
                             <h6 class="m-0 fw-bold text-dark"><i class="fas fa-plus-circle me-2"></i>Tambah Standar Gaji</h6>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('salary.storeConfig') }}" method="POST">
+                            <form action="{{ route('admin.salary.storeConfig') }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Pilih Role</label>
@@ -202,7 +202,7 @@
                                                     <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $config->id }}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <form action="{{ route('salary.destroyConfig', $config->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus konfigurasi ini?')">
+                                                    <form action="{{ route('admin.salary.destroyConfig', $config->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus konfigurasi ini?')">
                                                         @csrf @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                                                     </form>
@@ -217,7 +217,7 @@
                                                         <h5 class="modal-title fw-bold">Edit Gaji {{ strtoupper($config->role_name) }}</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
-                                                    <form action="{{ route('salary.updateConfig', $config->id) }}" method="POST">
+                                                    <form action="{{ route('admin.salary.updateConfig', $config->id) }}" method="POST">
                                                         @csrf @method('PUT')
                                                         <div class="modal-body p-4">
                                                             <div class="mb-3">

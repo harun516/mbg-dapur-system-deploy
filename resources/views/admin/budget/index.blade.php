@@ -225,12 +225,11 @@
                                 <span class="d-block fw-bold">{{ $trx->created_at->format('d M Y') }}</span>
                                 <small class="text-muted">{{ $trx->created_at->format('H:i') }} WIB</small>
                             </td>
-                            <td>
-                                {{-- Warna Badge otomatis sesuai kategori --}}
-                                @if($trx->kategori == 'Gaji Pegawai')
-                                    <span class="badge bg-danger-subtle text-danger px-3 py-2">{{ $trx->kategori }}</span>
+                            <td class="fw-bold">
+                                @if($trx->kategori == 'Gaji Pegawai' || str_contains(strtolower($trx->kategori), 'alokasi'))
+                                    <span class="text-danger">- Rp {{ number_format($trx->nominal, 0, ',', '.') }}</span>
                                 @else
-                                    <span class="badge bg-info-subtle text-info px-3 py-2">{{ $trx->kategori }}</span>
+                                    <span class="text-success">+ Rp {{ number_format($trx->nominal, 0, ',', '.') }}</span>
                                 @endif
                             </td>
                             <td><i class="fas fa-university me-1 text-muted"></i> {{ $trx->sumber_dana }}</td>
@@ -259,7 +258,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+     </div>
 
 <!-- Input Anggaran -->
 <div class="modal fade" id="modalTambahAnggaran" tabindex="-1" aria-hidden="true">

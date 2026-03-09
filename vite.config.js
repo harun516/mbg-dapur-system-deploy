@@ -4,14 +4,15 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     plugins: [
         laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/dapur/menu/notif-menu.js',
-                'resources/css/sidebar.css',
-                'resources/js/sidebar-toggle.js',
-                'resources/js/auth.js',  // JS khusus auth
-            ],
+           input: [
+        'resources/css/app.css',
+        'resources/css/auth.css', // TAMBAHKAN INI
+        'resources/js/app.js',
+        'resources/js/dapur/menu/notif-menu.js',
+        'resources/css/sidebar.css',
+        'resources/js/sidebar-toggle.js',
+        'resources/js/auth.js',
+    ],
             refresh: [
                 'resources/views/**/*.blade.php',  // auto-refresh semua Blade
                 'resources/js/**/*.js',

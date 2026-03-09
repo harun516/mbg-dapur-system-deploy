@@ -125,7 +125,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.salary.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('salary.index') }}">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.salary.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('admin.salary.index') }}">
                         <i class="fas fa-credit-card me-3 fs-5"></i> Salary Management
                     </a>
                 </li>

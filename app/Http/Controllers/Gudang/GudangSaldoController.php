@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Anggaran\Budget;
 use App\Models\Anggaran\BudgetAllocation;
 use App\Models\Anggaran\BudgetRequest;
@@ -28,20 +29,23 @@ class GudangSaldoController extends Controller
     }
 
     public function storeRequest(Request $request)
-    {
-        $request->validate([
-            'perihal' => 'required|string|max:255',
-            'nominal' => 'required|numeric|min:1000',
-            'alasan' => 'nullable|string'
-        ]);
+{
+    $request->validate([
+        'perihal' => 'required|string|max:255',
+        'nominal' => 'required|numeric|min:1000',
+        'alasan' => 'nullable|string'
+    ]);
 
-        BudgetRequest::create([
-            'perihal' => $request->perihal,
-            'nominal' => $request->nominal,
-            'alasan' => $request->alasan,
-            'status' => 'pending'
-        ]);
+    // Tambahkan Auth::id() supaya user_id terisi otomatis
+    BudgetRequest::create([
+        'perihal' => $request->perihal,
+        'nominal' => $request->nominal,
+        'catatan' => $request->alasan, // Di model kita tadi namanya 'catatan', sesuaikan ya
+        'user_id' => Auth::id(),    // ID user yang login (Gudang/Dapur)
+        'status'  => 'pending',
+        'is_enable' => true
+    ]);
 
-        return back()->with('success', 'Permintaan anggaran telah dikirim ke Admin!');
-    }
+    return back()->with('success', 'Permintaan anggaran telah dikirim ke Admin!');
+}
 }
