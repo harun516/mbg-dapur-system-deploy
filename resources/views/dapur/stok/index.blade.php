@@ -7,12 +7,10 @@
                 Pantau sisa bahan baku sebelum memulai produksi.
             </p>
             <div class="d-flex gap-2">
-                {{-- SESUAIKAN: Menggunakan rute riwayat (dapur.request.index) --}}
                 <a href="{{ route('dapur.request.index') }}" class="btn btn-outline-primary d-flex align-items-center">
                     <i class="fas fa-list me-2"></i> Riwayat Permintaan
                 </a>
                 
-                {{-- SESUAIKAN: Menggunakan rute create (dapur.request.create) --}}
                 <a href="{{ route('dapur.request.create') }}" class="btn btn-warning d-flex align-items-center">
                     <i class="fas fa-plus me-2"></i> Minta Barang ke Gudang
                 </a>
@@ -62,8 +60,8 @@
                         <p>
                             Silakan buat permintaan ke gudang untuk menambah bahan baku produksi.
                         </p>
-                        {{-- SESUAIKAN: Tombol empty state ke rute create --}}
-                        <a href="{{ route('dapur.request.create') }}" class="btn btn-warning px-5 py-3">
+                        {{-- Class px-5 py-3 dihapus agar mengikuti CSS custom --}}
+                        <a href="{{ route('dapur.request.create') }}" class="btn btn-warning">
                             <i class="fas fa-paper-plane me-2"></i> Buat Permintaan Sekarang
                         </a>
                     </div>

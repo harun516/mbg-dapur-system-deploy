@@ -219,46 +219,66 @@
                         </tr>
                     </thead>
                    <tbody>
-                        @forelse($transactions as $trx)
-                        <tr>
-                            <td class="ps-4">
-                                <span class="d-block fw-bold">{{ $trx->created_at->format('d M Y') }}</span>
-                                <small class="text-muted">{{ $trx->created_at->format('H:i') }} WIB</small>
-                            </td>
-                            <td class="fw-bold">
-                                @if($trx->kategori == 'Gaji Pegawai' || str_contains(strtolower($trx->kategori), 'alokasi'))
-                                    <span class="text-danger">- Rp {{ number_format($trx->nominal, 0, ',', '.') }}</span>
-                                @else
-                                    <span class="text-success">+ Rp {{ number_format($trx->nominal, 0, ',', '.') }}</span>
-                                @endif
-                            </td>
-                            <td><i class="fas fa-university me-1 text-muted"></i> {{ $trx->sumber_dana }}</td>
-                            
-                            {{-- LOGIKA NOMINAL: Jika Gaji, tampilkan Merah & Minus --}}
-                            <td class="fw-bold">
-                                @if($trx->kategori == 'Gaji Pegawai')
-                                    <span class="text-danger">- Rp {{ number_format($trx->nominal, 0, ',', '.') }}</span>
-                                @else
-                                    <span class="text-success">+ Rp {{ number_format($trx->nominal, 0, ',', '.') }}</span>
-                                @endif
-                            </td>
+                    @forelse($transactions as $trx)
+                    <tr>
+                        <td class="ps-4">
+                            <span class="d-block fw-bold">{{ $trx->created_at->format('d M Y') }}</span>
+                            <small class="text-muted">{{ $trx->created_at->format('H:i') }} WIB</small>
+                        </td>
 
-                            <td class="small text-muted text-truncate" style="max-width: 150px;">{{ $trx->keterangan ?? '-' }}</td>
-                            <td class="text-center">
-                                <span class="badge {{ $trx->status_enable ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }} rounded-pill px-3 py-2">
-                                    {{ $trx->status_enable ? 'Aktif' : 'Hidden' }}
-                                </span>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr><td colspan="6" class="text-center py-5 text-muted">Belum ada transaksi anggaran terekam.</td></tr>
-                        @endforelse
-                    </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-     </div>
+                        {{-- KOLOM KATEGORI (Penyesuaian Label Jenis Transaksi) --}}
+                        <td>
+                            @if(str_contains(strtolower($trx->kategori), 'alokasi') || $trx->kategori == 'Kirim Saldo ke gudang')
+                                <span class="badge bg-info-subtle text-info rounded-pill px-3">Kirim Saldo ke gudang</span>
+                            @elseif($trx->kategori == 'Belanja Bahan Baku' || $trx->kategori == 'penerimaan gudang')
+                                <span class="badge bg-warning-subtle text-warning rounded-pill px-3">penerimaan gudang</span>
+                            @elseif($trx->kategori == 'Modal Utama' || $trx->tipe == 'masuk')
+                                <span class="badge bg-success-subtle text-success rounded-pill px-3">Anggaran Masuk</span>
+                            @else
+                                <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3">{{ $trx->kategori }}</span>
+                            @endif
+                        </td>
+                        
+                        {{-- KOLOM SUMBER DANA --}}
+                        <td>
+                            <i class="fas fa-university me-1 text-muted"></i> {{ $trx->sumber_dana }}
+                        </td>
+                        
+                        {{-- KOLOM NOMINAL (Warna & Minus/Plus) --}}
+                        <td class="fw-bold">
+                            @if($trx->tipe == 'keluar' || $trx->kategori == 'Belanja Bahan Baku' || str_contains(strtolower($trx->kategori), 'alokasi'))
+                                <span class="text-danger">- Rp {{ number_format(abs($trx->nominal), 0, ',', '.') }}</span>
+                            @else
+                                <span class="text-success">+ Rp {{ number_format(abs($trx->nominal), 0, ',', '.') }}</span>
+                            @endif
+                        </td>
+
+                        {{-- KOLOM KETERANGAN --}}
+                        <td class="small text-muted">
+                            @if($trx->kategori == 'Belanja Bahan Baku')
+                                Belanja stok dari supplier
+                            @else
+                                {{ $trx->keterangan ?? '-' }}
+                            @endif
+                        </td>
+
+                        <td class="text-center">
+                            <span class="badge {{ $trx->status_enable ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }} rounded-pill px-3 py-2">
+                                {{ $trx->status_enable ? 'Aktif' : 'Hidden' }}
+                            </span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">Belum ada transaksi anggaran terekam.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
 
 <!-- Input Anggaran -->
 <div class="modal fade" id="modalTambahAnggaran" tabindex="-1" aria-hidden="true">
