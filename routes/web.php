@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\BudgetController;
 use App\Http\Controllers\Admin\SalaryController;
 use App\http\Controllers\Gudang\GudangSaldoController;
+use App\Http\Controllers\Admin\RecipientController;
+use App\Http\Controllers\Admin\ProductionPlanController;
 
 // ==================== ROOT & AUTH ==================== //
 Route::get('/', function () {
@@ -42,7 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- ADMIN ---
+// --- ADMIN ---///
     Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
@@ -57,6 +59,22 @@ Route::middleware(['auth'])->group(function () {
     // Budget Requests (Gudang ke Admin) - SEKARANG JADI admin.budget.request
     Route::get('/budget/request', [BudgetController::class, 'requestIndex'])->name('budget.request');
     Route::post('/budget/request/approve/{id}', [BudgetController::class, 'approveRequest'])->name('budget.approve');
+    
+    // Management Recipient
+    Route::get('/recipient', [RecipientController::class, 'index'])->name('recipient.index');
+    Route::get('/recipient/create', [RecipientController::class, 'create'])->name('recipient.create');
+    Route::post('/recipient', [RecipientController::class, 'store'])->name('recipient.store');
+    Route::get('/recipient/{id}/edit', [RecipientController::class, 'edit'])->name('recipient.edit');
+    Route::put('/recipient/{id}', [RecipientController::class, 'update'])->name('recipient.update');
+    
+    // production plan
+    Route::resource('production_plan', ProductionPlanController::class);
+    Route::patch('production_plan/{id}/update-status', [ProductionPlanController::class, 'updateStatus'])->name('production_plan.update-status');
+    Route::get('/production_plan/{id}/edit', [ProductionPlanController::class, 'edit'])->name('production_plan.edit');
+    Route::put('/production_plan/{id}', [ProductionPlanController::class, 'update'])->name('production_plan.update');
+    Route::get('/production_plan/create', [ProductionPlanController::class, 'create'])->name('production_plan.create');
+
+
 
     // Salary
         Route::get('/salary', [SalaryController::class, 'index'])->name('salary.index');
@@ -66,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/salary/payment', [SalaryController::class, 'processPayment'])->name('salary.payment');
     });
 
-    // --- GUDANG ---
+// --- GUDANG ---////
     Route::middleware('role:gudang')->prefix('gudang')->group(function () {
         Route::get('/', [App\Http\Controllers\Gudang\DashboardController::class, 'index'])->name('gudang.dashboard');
 

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Production;
+use App\Models\Master_Penerima\Recipient;
 use App\Models\Menu;
 use App\Models\Item;
 use App\Models\KitchenStock;
+use App\Models\ProductionPlan; 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -15,13 +17,14 @@ class ProductionController extends Controller
 {
     public function index()
     {
-        // Ambil riwayat produksi untuk tabel riwayat
         $productions = Production::with('menu')->latest()->paginate(10);
         
-        // Ambil daftar Menu (Master Resep) untuk ditampilkan sebagai Card Produksi
+        // AMBIL TOTAL PORSI DARI PENERIMA AKTIF
+        $totalPorsiTarget = Recipient::where('status_enable', 1)->sum('jumlah_porsi') ?? 0;
+
         $menus = Menu::with('requirements.item')->where('status_enable', 1)->paginate(12);
         
-        return view('dapur.production.index', compact('productions', 'menus'));
+        return view('dapur.production.index', compact('productions', 'menus', 'totalPorsiTarget'));
     }
 
     public function store(Request $request)
@@ -29,6 +32,7 @@ class ProductionController extends Controller
         $request->validate([
             'menu_id' => 'required|exists:menus,id',
             'jumlah_porsi' => 'required|integer|min:1',
+            'plan_id' => 'nullable|exists:production_plans,id', // Validasi plan_id
         ]);
 
         DB::beginTransaction();
@@ -39,8 +43,9 @@ class ProductionController extends Controller
             foreach ($menu->requirements as $req) {
                 $totalKebutuhan = $req->qty_per_porsi * $request->jumlah_porsi;
                 $ada = (float) KitchenStock::where('item_id', $req->item_id)
-                                ->where('status_enable', 1)
-                                ->sum('qty_sisa');
+                                    ->where('status_enable', 1)
+                                    ->where('qty_sisa', '>', 0)
+                                    ->sum('qty_sisa');
 
                 if ($ada < $totalKebutuhan) {
                     $satuan = $req->item->satuan ?? 'Unit';
@@ -48,8 +53,9 @@ class ProductionController extends Controller
                 }
             }
 
-            // 2. Simpan data produksi
-            Production::create([
+            // 2. Simpan data produksi (Sekarang membawa plan_id)
+            $production = Production::create([
+                'plan_id' => $request->plan_id, // Simpan ID rencana di sini
                 'menu_id' => $request->menu_id,
                 'jumlah_porsi' => $request->jumlah_porsi,
                 'tanggal_produksi' => now(),
@@ -57,7 +63,14 @@ class ProductionController extends Controller
                 'user_id' => Auth::id()
             ]);
 
-            // 3. Eksekusi Potong Stok (FIFO)
+            // 3. Update Status ProductionPlan (Jika produksi berasal dari rencana Admin)
+            if ($request->plan_id) {
+                ProductionPlan::where('id', $request->plan_id)->update([
+                    'status' => 'Selesai' // Status di Admin berubah jadi Selesai
+                ]);
+            }
+
+            // 4. Eksekusi Potong Stok (FIFO)
             foreach ($menu->requirements as $req) {
                 $remainingToDeduct = $req->qty_per_porsi * $request->jumlah_porsi;
                 $batches = KitchenStock::where('item_id', $req->item_id)
@@ -79,7 +92,9 @@ class ProductionController extends Controller
             }
 
             DB::commit();
-            return redirect()->back()->with('success', "Produksi {$menu->nama_menu} dimulai! Stok dapur berhasil dipotong.");
+            
+            // Jika lewat Dashboard, redirect ke Monitoring Produksi biar user lihat perubahannya
+            return redirect()->route('production.index')->with('success', "Produksi {$menu->nama_menu} dimulai! Stok dapur dipotong otomatis.");
 
         } catch (\Exception $e) {
             DB::rollback();

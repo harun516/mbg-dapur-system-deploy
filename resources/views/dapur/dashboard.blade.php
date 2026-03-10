@@ -59,64 +59,71 @@
         </div>
     </div>
 
-<!======================== STOK =======================!>
-<!-- <div class="container-dashboard mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="h4 fw-bold text-gray-900 mb-0">Stok Bahan di Dapur</h3>
-        <div class="d-flex gap-2">
-            <a href="{{ route('dapur.request.index') }}" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-history me-1"></i> Riwayat
-            </a>
-            <a href="{{ route('dapur.request.create') }}" class="btn btn-sm btn-warning">
-                <i class="fas fa-plus me-1"></i> Minta Barang
-            </a>
-        </div>
-    </div>
-
-    <div class="row g-3">
-        @forelse($kitchenStocks as $itemId => $batches)
-            @php 
-                $itemInfo = $batches->first()->item;
-                $totalSisa = $batches->sum('qty_sisa'); 
+<!======================== RENCANA MASAK =======================!>
+<div class="mb-5">
+    <h3 class="fw-bold text-dark mb-4"><i class="fas fa-clipboard-list text-primary me-2"></i> Order Produksi Hari Ini</h3>
+    <div class="row">
+        @forelse($rencanaMasak as $rencana)
+            @php
+                // Cek apakah rencana ini sudah mulai diproses di tabel productions
+                $sudahDimasak = $rencana->productions->first();
             @endphp
-            <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="card card-dashboard border-0 shadow-sm h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted small fw-bold text-uppercase">Bahan Baku</span>
-                            <span class="badge {{ $totalSisa <= 5 ? 'bg-danger' : 'bg-success' }} rounded-pill">
-                                {{ $totalSisa <= 5 ? 'Kritis' : 'Aman' }}
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm" style="border-left: 5px solid {{ $sudahDimasak ? '#6f42c1' : '#007bff' }} !important;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="fw-bold mb-0">{{ $rencana->menu->nama_menu }}</h5>
+                            <span class="badge {{ $sudahDimasak ? 'bg-purple text-white' : 'bg-primary' }}" style="{{ $sudahDimasak ? 'background-color: #6f42c1;' : '' }}">
+                                {{ number_format($rencana->total_porsi_target) }} Porsi
                             </span>
                         </div>
-                        <h5 class="fw-bold mb-3">{{ $itemInfo->nama_barang }}</h5>
+                        <p class="text-muted small mb-3">Diterima: {{ $rencana->updated_at->format('H:i') }} WIB</p>
                         
-                        <div class="d-flex align-items-baseline">
-                            <h2 class="fw-bold mb-0 me-2 text-primary">{{ number_format($totalSisa, 2, ',', '.') }}</h2>
-                            <span class="text-muted">{{ $itemInfo->satuan }}</span>
-                        </div>
-
-                        <div class="mt-3 pt-3 border-top">
-                            <p class="small text-muted mb-2">Detail Batch:</p>
-                            @foreach($batches->take(2) as $b) {{-- Tampilkan 2 batch terlama saja agar ringkas --}}
-                                <div class="d-flex justify-content-between small mb-1">
-                                    <span class="text-truncate" style="max-width: 100px;">#{{ $b->no_batch }}</span>
-                                    <span class="fw-bold">{{ (float)$b->qty_sisa }}</span>
+                        <div class="p-2 bg-light rounded mb-3" style="font-size: 0.85rem;">
+                            <strong class="d-block mb-1 small text-uppercase text-muted">Bahan Utama:</strong>
+                            @foreach($rencana->menu->requirements->take(3) as $req)
+                                <div class="d-flex justify-content-between">
+                                    <span>{{ $req->item->nama_barang }}</span>
+                                    <span class="fw-bold">{{ number_format($req->qty_per_porsi * $rencana->total_porsi_target, 2) }} {{ $req->item->satuan }}</span>
                                 </div>
                             @endforeach
-                            @if($batches->count() > 2)
-                                <div class="text-center small text-primary mt-2">+ {{ $batches->count() - 2 }} Batch lainnya</div>
+                            @if($rencana->menu->requirements->count() > 3)
+                                <small class="text-primary">+ {{ $rencana->menu->requirements->count() - 3 }} bahan lainnya</small>
                             @endif
                         </div>
+
+                        @if($sudahDimasak)
+                            <div class="d-grid">
+                                <div class="alert alert-info py-2 px-3 mb-2 border-0 text-center" style="font-size: 0.8rem; background-color: #e7e1f5; color: #59359a;">
+                                    <i class="fas fa-spinner fa-spin me-2"></i> Sedang diproses di dapur
+                                </div>
+                                <a href="{{ route('production.index') }}" class="btn btn-outline-purple w-100 fw-bold" style="color: #6f42c1; border-color: #6f42c1;">
+                                    <i class="fas fa-eye me-2"></i> LIHAT PROGRES
+                                </a>
+                            </div>
+                        @else
+                            <form action="{{ route('production.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="plan_id" value="{{ $rencana->id }}">
+                                <input type="hidden" name="menu_id" value="{{ $rencana->menu_id }}">
+                                <input type="hidden" name="jumlah_porsi" value="{{ $rencana->total_porsi_target }}">
+                                
+                                <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">
+                                    <i class="fas fa-utensils me-2"></i> MULAI MASAK
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
         @empty
-            <div class="col-12 text-center py-5">
-                <p class="text-muted">Tidak ada stok bahan di dapur.</p>
+            <div class="col-12 text-center py-4 bg-white rounded shadow-sm">
+                <img src="https://cdn-icons-png.flaticon.com/512/4076/4076402.png" style="width: 60px; opacity: 0.3;" class="mb-3">
+                <p class="text-muted mb-0">Belum ada order masuk dari Admin hari ini.</p>
             </div>
         @endforelse
     </div>
-</div> -->
+</div>
 
 <!============================MENU==============================>
     <div class="pb-4 mb-5 border-bottom">
