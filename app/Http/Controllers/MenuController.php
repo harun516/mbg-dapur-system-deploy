@@ -10,9 +10,25 @@ use Illuminate\Support\Facades\DB;
 
 class MenuController extends Controller
 {
-    public function index() {
-       $menus = Menu::with('requirements.item')->latest()->paginate(10); 
-      return view('dapur.menu.index', compact('menus'));
+    public function index()
+    {
+    // 1. Ambil data Master Menu (untuk Tab 1)
+    $menus = Menu::with('requirements.item')
+                ->where('status_enable', true)
+                ->latest()
+                ->paginate(12);
+
+    // 2. Ambil data Rencana Masak dari Admin (untuk Tab 2)
+    // Logika ini sama dengan yang ada di Dashboard agar sinkron
+    $rencanaMasak = \App\Models\ProductionPlan::with(['menu.requirements.item', 'productions']) 
+                ->where('status', 'Terkirim ke Dapur')
+                ->where('status_enable', true)
+                ->whereDate('tanggal_rencana', '<=', now()->format('Y-m-d'))
+                ->orderBy('tanggal_rencana', 'asc')
+                ->get();
+
+    // 3. Kirim KEDUA variabel ke view
+    return view('dapur.menu.index', compact('menus', 'rencanaMasak'));
     }
 
     public function create() {

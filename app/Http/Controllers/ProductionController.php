@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Production;
 use App\Models\Master_Penerima\Recipient;
 use App\Models\Menu;
-use App\Models\Item;
 use App\Models\KitchenStock;
 use App\Models\ProductionPlan; 
 use Illuminate\Support\Facades\DB;
@@ -18,28 +17,28 @@ class ProductionController extends Controller
     public function index()
     {
         $productions = Production::with('menu')->latest()->paginate(10);
-        
-        // AMBIL TOTAL PORSI DARI PENERIMA AKTIF
         $totalPorsiTarget = Recipient::where('status_enable', 1)->sum('jumlah_porsi') ?? 0;
-
         $menus = Menu::with('requirements.item')->where('status_enable', 1)->paginate(12);
         
         return view('dapur.production.index', compact('productions', 'menus', 'totalPorsiTarget'));
     }
 
+    /**
+     * LOGIKA MULAI MASAK DARI DASHBOARD (STOK FIFO)
+     */
     public function store(Request $request)
     {
         $request->validate([
             'menu_id' => 'required|exists:menus,id',
             'jumlah_porsi' => 'required|integer|min:1',
-            'plan_id' => 'nullable|exists:production_plans,id', // Validasi plan_id
+            'plan_id' => 'nullable|exists:production_plans,id', 
         ]);
 
         DB::beginTransaction();
         try {
             $menu = Menu::with('requirements.item')->findOrFail($request->menu_id);
 
-            // 1. Validasi Kecukupan Stok (Dry Run)
+            // 1. Validasi Kecukupan Stok
             foreach ($menu->requirements as $req) {
                 $totalKebutuhan = $req->qty_per_porsi * $request->jumlah_porsi;
                 $ada = (float) KitchenStock::where('item_id', $req->item_id)
@@ -48,29 +47,28 @@ class ProductionController extends Controller
                                     ->sum('qty_sisa');
 
                 if ($ada < $totalKebutuhan) {
-                    $satuan = $req->item->satuan ?? 'Unit';
-                    throw new \Exception("Bahan '{$req->item->nama_barang}' kurang! Butuh: " . (float)$totalKebutuhan . " {$satuan}, Tersedia: {$ada} {$satuan}.");
+                    throw new \Exception("Bahan '{$req->item->nama_barang}' kurang!");
                 }
             }
 
-            // 2. Simpan data produksi (Sekarang membawa plan_id)
-            $production = Production::create([
-                'plan_id' => $request->plan_id, // Simpan ID rencana di sini
-                'menu_id' => $request->menu_id,
-                'jumlah_porsi' => $request->jumlah_porsi,
-                'tanggal_produksi' => now(),
-                'status' => 'Proses Masak',
-                'user_id' => Auth::id()
-            ]);
+            // 2. Simpan/Update data produksi
+            $production = Production::updateOrCreate(
+                ['plan_id' => $request->plan_id],
+                [
+                    'menu_id' => $request->menu_id,
+                    'jumlah_porsi' => $request->jumlah_porsi,
+                    'tanggal_produksi' => now(),
+                    'status' => 'Proses Masak',
+                    'user_id' => Auth::id()
+                ]
+            );
 
-            // 3. Update Status ProductionPlan (Jika produksi berasal dari rencana Admin)
+            // 3. Sinkronkan status Admin ke 'Proses Masak'
             if ($request->plan_id) {
-                ProductionPlan::where('id', $request->plan_id)->update([
-                    'status' => 'Selesai' // Status di Admin berubah jadi Selesai
-                ]);
+                ProductionPlan::where('id', $request->plan_id)->update(['status' => 'Proses Masak']);
             }
 
-            // 4. Eksekusi Potong Stok (FIFO)
+            // 4. Potong Stok (FIFO)
             foreach ($menu->requirements as $req) {
                 $remainingToDeduct = $req->qty_per_porsi * $request->jumlah_porsi;
                 $batches = KitchenStock::where('item_id', $req->item_id)
@@ -92,9 +90,7 @@ class ProductionController extends Controller
             }
 
             DB::commit();
-            
-            // Jika lewat Dashboard, redirect ke Monitoring Produksi biar user lihat perubahannya
-            return redirect()->route('production.index')->with('success', "Produksi {$menu->nama_menu} dimulai! Stok dapur dipotong otomatis.");
+            return redirect()->route('production.index')->with('success', "Produksi dimulai!");
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -103,18 +99,45 @@ class ProductionController extends Controller
         }
     }
 
-    public function updateStatus(Request $request, $id)
+    /**
+     * UPDATE STATUS SINKRON KE ADMIN (FIX STATUS TIDAK BERUBAH)
+     */
+   public function updateStatus(Request $request, $id)
     {
-        $request->validate([
-            'status' => 'required|in:Proses Masak,Packing,Siap Distribusi,Batal'
-        ]);
+    $request->validate([
+        'status' => 'required|in:Proses Masak,Packing,Siap Distribusi,Batal'
+    ]);
 
-        try {
-            $production = Production::findOrFail($id);
-            $production->update(['status' => $request->status]);
-            return redirect()->back()->with('success', "Status berhasil diperbarui ke {$request->status}");
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', "Gagal update status: " . $e->getMessage());
+    DB::beginTransaction();
+    try {
+        $production = Production::findOrFail($id);
+        
+        // 1. Update status di tabel Dapur
+        $production->update(['status' => $request->status]);
+
+        // 2. Sinkronisasi ke tabel Admin
+        if ($production->plan_id) {
+            $statusMap = [
+                'Proses Masak'    => 'Proses Masak',
+                'Packing'         => 'Packing',
+                'Siap Distribusi' => 'Selesai', // Mapping ke ENUM Admin
+                'Batal'           => 'Dibatalkan'
+            ];
+
+            $adminStatus = $statusMap[$request->status] ?? $request->status;
+
+            // Update menggunakan Eloquent agar trigger update berjalan baik
+            ProductionPlan::where('id', $production->plan_id)->update([
+                'status' => $adminStatus
+            ]);
         }
+
+        DB::commit();
+        return redirect()->back()->with('success', "Status diperbarui ke {$request->status}");
+    } catch (\Exception $e) {
+        DB::rollback();
+        Log::error("Gagal Update Status: " . $e->getMessage());
+        return redirect()->back()->with('error', "Gagal: " . $e->getMessage());
+    }
     }
 }

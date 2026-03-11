@@ -112,7 +112,7 @@ body {
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="table-rencana-produksi">
 
                     @forelse($plans as $plan)
 
@@ -143,19 +143,22 @@ body {
                         </td>
 
                         <td class="text-center">
-
                             @php
                                 $statusColor = [
-                                    'Draft' => 'bg-secondary',
+                                    'Draft'             => 'bg-secondary',
                                     'Terkirim ke Dapur' => 'bg-info',
-                                    'Selesai' => 'bg-success'
+                                    'Sedang Dimasak'    => 'bg-warning text-dark',
+                                    'Proses Masak'      => 'bg-warning text-dark', // Backup jika teks ini yang masuk
+                                    'Packing'           => 'bg-primary',
+                                    'Siap Distribusi'   => 'bg-info',
+                                    'Selesai'           => 'bg-success',
+                                    'Dibatalkan'        => 'bg-danger'
                                 ][$plan->status] ?? 'bg-dark';
                             @endphp
 
                             <span class="badge {{ $statusColor }}">
                                 {{ $plan->status }}
                             </span>
-
                         </td>
 
                         <td class="text-end">
@@ -239,5 +242,42 @@ body {
 
 
 </div>
+<script>
+    $(document).ready(function() {
+        let isRefreshing = false;
+
+        function refreshStatus() {
+            // Cek agar tidak ada request ganda yang berjalan bersamaan
+            if (isRefreshing) return;
+            
+            isRefreshing = true;
+
+            $.ajax({
+                url: window.location.href,
+                type: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    // Hanya ambil bagian body tabel agar tidak merusak header/ID tabel utama
+                    // Strategi ini menjaga agar event listener lain tidak hilang
+                    var newContent = $(response).find('#table-rencana-produksi').html();
+                    
+                    if (newContent) {
+                        $('#table-rencana-produksi').html(newContent);
+                        console.log('Dashboard Admin Berhasil Disinkronkan: ' + new Date().toLocaleTimeString());
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Koneksi terputus atau gagal sinkronisasi.');
+                },
+                complete: function() {
+                    isRefreshing = false;
+                }
+            });
+        }
+
+        // Jalankan setiap 5 detik (lebih responsif untuk memantau dapur)
+        setInterval(refreshStatus, 5000);
+    });
+</script>
 
 </x-app-layout>
