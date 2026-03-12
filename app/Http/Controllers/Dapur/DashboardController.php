@@ -24,13 +24,14 @@ class DashboardController extends Controller
     ];
 
     // 2. PERBAIKAN QUERY RENCANA MASAK
-    // Kita ambil yang statusnya 'Terkirim ke Dapur' 
-    // DAN tanggal rencananya adalah <= hari ini (agar yang kemarin belum beres tetap muncul)
     $rencanaMasak = ProductionPlan::with(['menu.requirements.item', 'productions']) 
                 ->where('status', 'Terkirim ke Dapur')
                 ->where('status_enable', true)
-                ->whereDate('tanggal_rencana', '<=', now()->format('Y-m-d')) // Ubah jadi <=
-                ->orderBy('tanggal_rencana', 'asc') // Urutkan dari yang paling lama
+                ->whereHas('productions', function($q) {
+                    $q->where('status', 'Menunggu Dapur'); 
+                })
+                ->whereDate('tanggal_rencana', '<=', now()->format('Y-m-d'))
+                ->orderBy('tanggal_rencana', 'asc')
                 ->get();
 
     // 3. Sisanya tetap sama

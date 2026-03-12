@@ -26,7 +26,7 @@ class ProductionController extends Controller
     /**
      * LOGIKA MULAI MASAK DARI DASHBOARD (STOK FIFO)
      */
-    public function store(Request $request)
+   public function store(Request $request)
     {
         $request->validate([
             'menu_id' => 'required|exists:menus,id',
@@ -38,7 +38,7 @@ class ProductionController extends Controller
         try {
             $menu = Menu::with('requirements.item')->findOrFail($request->menu_id);
 
-            // 1. Validasi Kecukupan Stok
+            // 1. Validasi Kecukupan Stok (Tetap sama)
             foreach ($menu->requirements as $req) {
                 $totalKebutuhan = $req->qty_per_porsi * $request->jumlah_porsi;
                 $ada = (float) KitchenStock::where('item_id', $req->item_id)
@@ -52,23 +52,25 @@ class ProductionController extends Controller
             }
 
             // 2. Simpan/Update data produksi
+            // Pastikan status HANYA berubah jadi 'Proses Masak' saat tombol ini ditekan
             $production = Production::updateOrCreate(
                 ['plan_id' => $request->plan_id],
                 [
                     'menu_id' => $request->menu_id,
                     'jumlah_porsi' => $request->jumlah_porsi,
                     'tanggal_produksi' => now(),
-                    'status' => 'Proses Masak',
+                    'status' => 'Proses Masak', // Di sini baru jadi Proses Masak
                     'user_id' => Auth::id()
                 ]
             );
 
-            // 3. Sinkronkan status Admin ke 'Proses Masak'
+            // 3. Sinkronkan status ke ProductionPlan (Admin)
             if ($request->plan_id) {
+                // Gunakan status yang konsisten dengan tabel rencana harian
                 ProductionPlan::where('id', $request->plan_id)->update(['status' => 'Proses Masak']);
             }
 
-            // 4. Potong Stok (FIFO)
+            // 4. Potong Stok FIFO (Tetap sama)
             foreach ($menu->requirements as $req) {
                 $remainingToDeduct = $req->qty_per_porsi * $request->jumlah_porsi;
                 $batches = KitchenStock::where('item_id', $req->item_id)
@@ -90,7 +92,7 @@ class ProductionController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('production.index')->with('success', "Produksi dimulai!");
+            return redirect()->route('production.index')->with('success', "Produksi dimulai! Status sinkron ke Admin.");
 
         } catch (\Exception $e) {
             DB::rollback();

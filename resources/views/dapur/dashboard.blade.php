@@ -65,8 +65,9 @@
     <div class="row">
         @forelse($rencanaMasak as $rencana)
             @php
-                // Cek apakah rencana ini sudah mulai diproses di tabel productions
-                $sudahDimasak = $rencana->productions->first();
+                // Cek apakah data produksi sudah ada DAN statusnya sudah 'Proses Masak'
+                $prod = $rencana->productions->first();
+                $sudahDimasak = ($prod && $prod->status !== 'Menunggu Dapur');
             @endphp
             <div class="col-md-4 mb-4">
                 <div class="card border-0 shadow-sm" style="border-left: 5px solid {{ $sudahDimasak ? '#6f42c1' : '#007bff' }} !important;">

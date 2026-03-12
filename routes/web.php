@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\SalaryController;
 use App\http\Controllers\Gudang\GudangSaldoController;
 use App\Http\Controllers\Admin\RecipientController;
 use App\Http\Controllers\Admin\ProductionPlanController;
-
+use App\Http\Controllers\Admin\DeliveryController;
 // ==================== ROOT & AUTH ==================== //
 Route::get('/', function () {
     return redirect()->route('login');
@@ -47,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
 // --- ADMIN ---///
     Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    // print surat jalan
+    Route::get('/delivery/{id}/print', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'printSurat'])->name('delivery.print');
 
     // Budget Management
     Route::get('/budget', [BudgetController::class, 'index'])->name('budget.index');
@@ -73,7 +75,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/production_plan/{id}/edit', [ProductionPlanController::class, 'edit'])->name('production_plan.edit');
     Route::put('/production_plan/{id}', [ProductionPlanController::class, 'update'])->name('production_plan.update');
     Route::get('/production_plan/create', [ProductionPlanController::class, 'create'])->name('production_plan.create');
-
+    // Delivery
+    Route::post('/delivery/store', [App\Http\Controllers\Admin\DeliveryController::class, 'store'])->name('delivery.store');
+    Route::post('/delivery/disable/{id}', [App\Http\Controllers\Admin\DeliveryController::class, 'disable'])->name('delivery.disable');
 
 
     // Salary
@@ -142,11 +146,21 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    // --- KURIR ---
-    Route::middleware('role:kurir')->prefix('kurir')->group(function () {
-        Route::get('/', function () {
-            return view('kurir.dashboard');
-        })->name('kurir.dashboard');
+// --- KURIR ---///////////////////////////
+    Route::middleware(['auth', 'role:kurir'])->prefix('kurir')->name('kurir.')->group(function () {
+        
+        // Dashboard Utama (Sekarang mengarah ke Controller, bukan langsung view)
+        Route::get('/dashboard', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'index'])->name('dashboard');
+        // print
+        Route::get('/delivery/{id}/print', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'printSurat'])->name('delivery.print');
+        
+        // Redirect jika akses root kurir (opsional)
+        Route::get('/', function () { return redirect()->route('kurir.dashboard'); });
+
+        // Aksi Logistik
+        Route::post('/delivery/{id}/take', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'takeJob'])->name('delivery.take');
+        Route::post('/delivery/{id}/complete', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'completeJob'])->name('delivery.complete');
+        
     });
 });
 

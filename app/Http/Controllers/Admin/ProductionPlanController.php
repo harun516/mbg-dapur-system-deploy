@@ -6,17 +6,53 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductionPlan;
 use App\Models\Menu;
 use App\Models\Master_Penerima\Recipient;
-use App\Models\Production; // Tambahkan ini
+use App\Models\Production; 
+use App\Models\User;
+use App\Models\Delivery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class ProductionPlanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $plans = ProductionPlan::with('menu')->latest()->paginate(10);
-        return view('admin.production_plan.index', compact('plans'));
+    // --- Filter Rencana Produksi (Atas) ---
+    $queryPlan = ProductionPlan::with('menu');
+
+    if ($request->filled('plan_date')) {
+        $queryPlan->whereDate('tanggal_rencana', $request->plan_date);
+    }
+    if ($request->filled('plan_menu')) {
+        $queryPlan->where('menu_id', $request->plan_menu);
+    }
+    
+    $plans = $queryPlan->latest()->paginate(10)->withQueryString();
+
+    // --- Filter Monitoring Kurir (Bawah) ---
+    $queryDelivery = Delivery::with(['productionPlan.menu', 'recipient', 'courier'])->where('status_enable', 1);
+
+    if ($request->filled('delivery_date')) {
+        $queryDelivery->whereDate('created_at', $request->delivery_date);
+    }
+    if ($request->filled('delivery_school')) {
+        $queryDelivery->where('recipient_id', $request->delivery_school);
+    }
+    if ($request->filled('delivery_courier')) {
+        $queryDelivery->where('courier_id', $request->delivery_courier);
+    }
+    if ($request->filled('delivery_status')) {
+        $queryDelivery->where('status', $request->delivery_status);
+    }
+
+    $deliveries = $queryDelivery->latest()->get();
+
+    // Data untuk Dropdown Filter
+    $menus = \App\Models\Menu::all();
+    $recipients = \App\Models\Master_Penerima\Recipient::where('status_enable', 1)->orderBy('nama_lembaga', 'asc')->get();
+    $couriers = \App\Models\User::where('role', 'kurir')->get();
+
+    return view('admin.production_plan.index', compact('plans', 'deliveries', 'menus', 'recipients', 'couriers'));
     }
 
     public function create()
@@ -83,20 +119,19 @@ class ProductionPlanController extends Controller
     
     DB::beginTransaction();
     try {
-        // 1. Update status Admin
+        // 1. Update status di tabel Rencana (Admin)
         $plan->update(['status' => $request->status]);
 
-        // 2. Jika kirim ke dapur
+        // 2. Jika Admin memilih "Terkirim ke Dapur"
         if ($request->status == 'Terkirim ke Dapur') {
-            // Kita gunakan updateOrCreate untuk memastikan HANYA ADA 1 record per plan_id
             Production::updateOrCreate(
                 ['plan_id' => $plan->id], 
                 [
                     'menu_id'          => $plan->menu_id,
                     'tanggal_produksi' => $plan->tanggal_rencana,
                     'jumlah_porsi'     => $plan->total_porsi_target,
-                    'status'           => 'Proses Masak',
-                    'user_id'          => auth()->id() ?? 1
+                    'status'           => 'Menunggu Dapur', // STATUS AWAL DI DAPUR
+                    'user_id'          => Auth::id() ?? 1
                 ]
             );
         }
@@ -107,12 +142,5 @@ class ProductionPlanController extends Controller
         DB::rollback();
         return back()->with('error', 'Gagal: ' . $e->getMessage());
     }
-    }
-
-    public function destroy($id)
-    {
-        $plan = ProductionPlan::findOrFail($id);
-        $plan->delete();
-        return redirect()->route('admin.production_plan.index')->with('success', 'Rencana produksi berhasil dihapus!');
     }
 }

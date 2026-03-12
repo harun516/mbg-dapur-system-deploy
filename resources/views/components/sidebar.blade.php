@@ -119,8 +119,8 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('penerimaan.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('penerimaan.index') }}">
-                        <i class="fas fa-truck-loading me-3 fs-5"></i> Penerimaan
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.production_plan.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('admin.production_plan.index') }}">
+                        <i class="fas fa-truck-loading me-3 fs-5"></i> Rencana Produksi
                     </a>
                 </li>
 
