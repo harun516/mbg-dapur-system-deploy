@@ -2,7 +2,12 @@
 
 
 <div class="container-table">
-    <h2>Daftar Penerimaan Barang</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Daftar Penerimaan Barang</h2>
+        <a href="{{ route('penerimaan.input') }}" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus me-1"></i> Tambah Penerimaan
+        </a>
+    </div>
 
     <!-- FILTER YANG SUDAH DIRAPIHKAN -->
     <form method="GET" action="{{ route('penerimaan.index') }}" class="filter-card">
