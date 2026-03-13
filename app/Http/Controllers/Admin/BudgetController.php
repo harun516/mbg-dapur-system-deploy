@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class BudgetController extends Controller
 {
-   public function index()
+    public function index()
     {
         $budget = Budget::firstOrCreate(
             ['id' => 1],
@@ -28,31 +28,31 @@ class BudgetController extends Controller
         $transactions = BudgetTransaction::where('status_enable', 1)
                                          ->orderBy('created_at', 'desc')
                                          ->get();
-        
+
         $allocations = BudgetAllocation::where('status_enable', 1)->get();
-        $totalAlokasi = $allocations->sum('nominal'); 
-        $modalAwal = $budget->modal_awal ?? 0;
+        $totalAlokasi = $allocations->sum('nominal');
+        $modalAwal = $budget->saldo_saat_ini ?? 0;
         $persenTerpakai = ($modalAwal > 0) ? ($totalAlokasi / $modalAwal) * 100 : 0;
         $sisaBebas = $budget->saldo_saat_ini;
         $saldoGudang = $budget->saldo_belanja_gudang;
-        
+
         return view('admin.budget.index', compact(
-            'budget', 
-            'transactions', 
-            'allocations', 
-            'sisaBebas', 
+            'budget',
+            'transactions',
+            'allocations',
+            'sisaBebas',
             'persenTerpakai',
             'saldoGudang',
             'totalAlokasi'
         ));
     }
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'nominal' => 'required|numeric|min:1',
             'kategori' => 'required|string',
-            'sumber_dana' => 'required|string', 
+            'sumber_dana' => 'required|string',
             'keterangan' => 'nullable|string'
         ]);
 
@@ -66,11 +66,11 @@ class BudgetController extends Controller
                 'sumber_dana' => $request->sumber_dana,
                 'nominal' => $request->nominal,
                 'keterangan' => $request->keterangan,
-                'status_enable' => 1 
+                'status_enable' => 1
             ]);
 
             $budget->increment('saldo_saat_ini', $request->nominal);
-            
+
             if ($budget->modal_awal == 0) {
                 $budget->update(['modal_awal' => $request->nominal]);
             }
@@ -91,7 +91,15 @@ class BudgetController extends Controller
             DB::beginTransaction();
             $budget = Budget::lockForUpdate()->first();
 
+            // Validasi Budget ada
+            if (!$budget) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Data budget tidak ditemukan!');
+            }
+
+            // Validasi Saldo Cukup
             if ($request->nominal > $budget->saldo_saat_ini) {
+                DB::rollBack();
                 return redirect()->back()->with('error', 'Saldo utama tidak mencukupi untuk alokasi ini!');
             }
 
@@ -106,7 +114,7 @@ class BudgetController extends Controller
             if (str_contains(strtolower($request->nama_alokasi), 'belanja')) {
                 $budget->decrement('saldo_saat_ini', $request->nominal);
                 $budget->increment('saldo_belanja_gudang', $request->nominal);
-                $kategori = 'Kirim Saldo ke gudang'; 
+                $kategori = 'Kirim Saldo ke gudang';
                 $pesan = 'Dana berhasil dialokasikan dan dipindahkan ke Saldo Belanja Gudang!';
             } else {
                 $budget->decrement('saldo_saat_ini', $request->nominal);
@@ -149,7 +157,7 @@ class BudgetController extends Controller
             }
 
             $allocation->delete();
-            
+
             DB::commit();
             return redirect()->back()->with('success', 'Alokasi berhasil dihapus dan saldo dikembalikan.');
         } catch (\Exception $e) {
@@ -158,13 +166,13 @@ class BudgetController extends Controller
         }
     }
 
-// ==================== PENGAJUAN ANGGARAN DARI GUDANG/DAPUR ==================== //
+    // ==================== PENGAJUAN ANGGARAN DARI GUDANG/DAPUR ==================== //
     public function requestIndex()
     {
-    // Ambil semua request dengan data user pemintanya
-    $requests = BudgetRequest::with('user')->orderBy('created_at', 'desc')->get();
-    
-    return view('admin.budget.request', compact('requests'));
+        // Ambil semua request dengan data user pemintanya
+        $requests = BudgetRequest::with('user')->orderBy('created_at', 'desc')->get();
+
+        return view('admin.budget.request', compact('requests'));
     }
 
     public function approveRequest($id)
