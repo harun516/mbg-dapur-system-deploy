@@ -116,7 +116,7 @@
         <div class="col align-items-center flex-col">
             <div class="text sign-in">
                 <h2>Selamat Datang Kembali</h2>
-                <p>Masuk untuk mengelola sistem gudang dan produksi.</p>
+                <p>Masuk untuk memulai manajemen operasional DAPURKU hari ini.</p>
             </div>
         </div>
 

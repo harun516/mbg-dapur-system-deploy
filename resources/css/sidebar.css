@@ -1,4 +1,50 @@
 /* Container Utama Sidebar */
+
+/* LOGO DAN HEADER */
+/* Styling Header Sidebar */
+.sidebar-header {
+    background-color: #ffffff;
+    /* pt-5 memberikan jarak sekitar 3rem dari atas browser */
+    padding-top: 3rem !important; 
+}
+/* Wrapper Logo  */
+.logo-wrapper-sm {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
+    flex-shrink: 0;
+}
+
+/* Gambar Logo */
+.sidebar-logo-sm {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar-header hr {
+    margin-left: -1rem;
+    margin-right: -1rem;
+}
+
+.brand-text {
+    max-width: 140px; 
+}
+/* Efek sedikit zoom saat sidebar diakses */
+#sidebar:not(.collapsed) .sidebar-logo:hover {
+    transform: scale(1.1);
+}
+
+/* Penyesuaian Logout agar lebih cantik */
+.hover-bg-danger-subtle:hover {
+    background-color: #fee2e2 !important;
+    color: #dc2626 !important;
+}
+
+/* utama */
 #sidebar {
     width: 260px;
     height: 100vh;

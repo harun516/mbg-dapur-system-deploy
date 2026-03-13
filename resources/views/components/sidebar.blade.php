@@ -1,8 +1,19 @@
 <nav class="bg-white text-dark vh-100 position-fixed top-0 start-0 shadow-sm border-end border-light" style="width: 260px; z-index: 1000; overflow-y: auto; transition: all 0.3s ease;" id="sidebar">
-    <div class="p-4 text-center border-bottom border-light">
-        <h4 class="mb-1 fw-bold text-primary">MBG DAPUR 01</h4>
-        <small class="text-muted">Sistem Terintegrasi</small>
+    
+    <div class="sidebar-header pt-5 pb-3 px-4">
+        <div class="d-flex align-items-center justify-content-center mb-3">
+            <div class="logo-wrapper-sm me-3">
+                <img src="{{ asset('Logo.png') }}" alt="Logo" class="sidebar-logo-sm">
+            </div>
+        
+            <div class="brand-text">
+                <h5 class="mb-0 fw-bold text-primary" style="font-size: 1.1rem; line-height: 1.2;">DAPURKU</h5>
+                <small class="text-muted d-block" style="font-size: 0.7rem;">Sistem Terintegrasi</small>
+            </div>
+        </div>
+        <hr class="mt-4 mb-2" style="border-top: 2px solid #e5e7eb; opacity: 1;">
     </div>
+    
 
     <div class="p-3">
         <ul class="nav flex-column gap-1">
