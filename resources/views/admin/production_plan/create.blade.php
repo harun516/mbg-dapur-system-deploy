@@ -1,123 +1,62 @@
 <x-app-layout>
-<style>
-/* Theme konsisten dengan halaman lain */
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-}
-
-.card {
-    border: none;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    background-color: #ffffff;
-    margin-bottom: 30px;
-}
-
-.card-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #dee2e6;
-    padding: 18px 24px;
-}
-
-.card-header h6 {
-    font-size: 18px;
-    margin: 0;
-    font-weight: 700;
-    color: #007bff;
-}
-
-.card-body {
-    padding: 24px;
-}
-
-.form-label {
-    font-weight: 600;
-    color: #444;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border: none;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 4px;
-}
-
-.btn-primary:hover {
-    background-color: #0069d9;
-}
-
-.text-primary {
-    color: #007bff !important;
-}
-
-.input-group-text {
-    background-color: #007bff;
-    color: white;
-    border: 1px solid #007bff;
-}
-</style>
-
-
-<div class="card">
-
-    <div class="card-header">
-        <h6>Buat Rencana Produksi Harian</h6>
-    </div>
-
-    <div class="card-body">
-
-        <form action="{{ route('admin.production_plan.store') }}" method="POST">
-            @csrf
-
-            <div class="mb-3">
-                <label class="form-label">Tanggal Rencana Masak</label>
-                <input type="date" name="tanggal_rencana" class="form-control"
-                    value="{{ date('Y-m-d') }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Pilih Menu Hari Ini</label>
-                <select name="menu_id" class="form-select" required>
-                    <option value="">-- Pilih Master Resep --</option>
-                    @foreach($menus as $menu)
-                        <option value="{{ $menu->id }}">{{ $menu->nama_menu }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label text-primary">Total Target Porsi</label>
-
-                <div class="input-group">
-                    <input type="number"
-                        name="total_porsi_target"
-                        class="form-control fw-bold text-primary border-primary"
-                        value="{{ $suggestedPorsi }}"
-                        required>
-
-                    <span class="input-group-text">Porsi</span>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold text-primary">
+                        <i class="fas fa-calendar-plus me-2"></i>Buat Rencana Produksi Harian
+                    </h5>
                 </div>
 
-                <small class="text-muted">
-                    *Angka otomatis mengambil dari total Penerima MBG Aktif.
-                </small>
+                <div class="card-body p-4">
+                    <form action="{{ route('admin.production_plan.store') }}" method="POST">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">Tanggal Rencana Masak</label>
+                            <input type="date" name="tanggal_rencana" class="form-control form-control-lg"
+                                value="{{ date('Y-m-d') }}" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">Pilih Menu Hari Ini</label>
+                            <select name="menu_id" class="form-select form-select-lg" required>
+                                <option value="">-- Pilih Master Resep --</option>
+                                @foreach($menus as $menu)
+                                    <option value="{{ $menu->id }}">{{ $menu->nama_menu }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-5 p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-3">
+                            <label class="form-label text-primary fw-bold mb-2">Total Target Porsi</label>
+                            
+                            <div class="input-group input-group-lg shadow-sm">
+                                <input type="number"
+                                    name="total_porsi_target"
+                                    class="form-control fw-bold text-primary border-primary"
+                                    value="{{ $suggestedPorsi }}"
+                                    required>
+                                <span class="input-group-text bg-primary text-white border-primary"><i class="fas fa-utensils me-1"></i> Porsi</span>
+                            </div>
+
+                            <small class="text-primary mt-2 d-block fw-semibold">
+                                <i class="fas fa-info-circle me-1"></i> Angka otomatis mengambil dari total Penerima MBG Aktif.
+                            </small>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{{ route('admin.production_plan.index') }}" class="btn btn-light px-4">Batal</a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">
+                                <i class="fas fa-paper-plane me-2"></i> Simpan & Kirim ke Dapur
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
             </div>
-
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary py-2 fw-bold">
-                    Simpan & Kirim ke Dapur
-                </button>
-            </div>
-
-        </form>
-
+        </div>
     </div>
-
 </div>
-
 </x-app-layout>

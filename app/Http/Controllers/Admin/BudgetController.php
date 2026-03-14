@@ -14,16 +14,16 @@ class BudgetController extends Controller
 {
     public function index()
     {
-        $budget = Budget::firstOrCreate(
-            ['id' => 1],
-            [
-                'nama_proyek' => 'Program Makan Bergizi Gratis 2026',
+        $budget = Budget::latest('id')->first();
+        if (!$budget) {
+            $budget = Budget::create([
+                'nama_proyek' => 'Program Makan Bergizi Gratis',
                 'modal_awal' => 0,
                 'saldo_saat_ini' => 0,
                 'saldo_belanja_gudang' => 0,
                 'status_enable' => 1,
-            ]
-        );
+            ]);
+        }
 
         $transactions = BudgetTransaction::where('status_enable', 1)
             ->orderBy('created_at', 'desc')
@@ -34,8 +34,8 @@ class BudgetController extends Controller
         $totalAlokasi = $allocations->sum('nominal');
         $modalAwal = $budget->saldo_saat_ini ?? 0;
         $persenTerpakai = ($modalAwal > 0) ? ($totalAlokasi / $modalAwal) * 100 : 0;
-        $sisaBebas = $budget->saldo_saat_ini;
-        $saldoGudang = $budget->saldo_belanja_gudang;
+        $sisaBebas = $budget->saldo_saat_ini ?? 0;
+        $saldoGudang = $budget->saldo_belanja_gudang ?? 0;
 
         return view('admin.budget.index', compact(
             'budget',
@@ -44,7 +44,7 @@ class BudgetController extends Controller
             'sisaBebas',
             'persenTerpakai',
             'saldoGudang',
-            'totalAlokasi'
+            'totalAlokasi',
         ));
     }
 
@@ -58,7 +58,16 @@ class BudgetController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
-            $budget = Budget::lockForUpdate()->firstOrCreate(['id' => 1]);
+            $budget = Budget::lockForUpdate()->latest('id')->first();
+            if (!$budget) {
+                $budget = Budget::create([
+                    'nama_proyek' => 'Program Makan Bergizi Gratis',
+                    'modal_awal' => 0,
+                    'saldo_saat_ini' => 0,
+                    'saldo_belanja_gudang' => 0,
+                    'status_enable' => 1,
+                ]);
+            }
 
             BudgetTransaction::create([
                 'budget_id' => $budget->id,

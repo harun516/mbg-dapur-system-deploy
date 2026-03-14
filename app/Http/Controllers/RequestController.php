@@ -75,6 +75,8 @@ class RequestController extends Controller
         $stockRequest = StockRequest::with('details.item')->findOrFail($id);
 
         if ('Pending' !== $stockRequest->status) {
+            DB::rollback();
+
             return back()->with('error', 'Permintaan ini sudah diproses.');
         }
 
@@ -105,11 +107,24 @@ class RequestController extends Controller
                     // Kurangi di gudang
                     $batch->decrement('qty_sisa', $take);
 
-                    // Tambah ke dapur (update or create)
-                    KitchenStock::updateOrCreate(
-                        ['item_id' => $detail->item_id, 'no_batch' => $batch->no_batch],
-                        ['qty_sisa' => DB::raw("qty_sisa + {$take}"), 'status_enable' => 1]
-                    );
+                    // Tambah ke dapur (cek dulu ada atau tidak)
+                    $kitchenStock = KitchenStock::where('item_id', $detail->item_id)
+                        ->where('no_batch', $batch->no_batch)
+                        ->first()
+                    ;
+
+                    if ($kitchenStock) {
+                        // Jika ada, tambah qty_sisa
+                        $kitchenStock->increment('qty_sisa', $take);
+                    } else {
+                        // Jika belum ada, buat baru
+                        KitchenStock::create([
+                            'item_id' => $detail->item_id,
+                            'no_batch' => $batch->no_batch,
+                            'qty_sisa' => $take,
+                            'status_enable' => 1,
+                        ]);
+                    }
 
                     $qtyNeeded -= $take;
                 }

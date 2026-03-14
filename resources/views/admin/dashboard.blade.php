@@ -121,27 +121,27 @@
                 <div class="card-body p-4">
                     <div class="row g-4 text-center">
                         <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
-                                <i class="fas fa-users fa-2x mb-3"></i>
-                                Kelola User
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
-                                <i class="fas fa-boxes fa-2x mb-3"></i>
-                                Master Barang
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
+                            <a href="{{ route('admin.budget.index') }}" class="btn btn-dashboard-outline w-100">
                                 <i class="fas fa-file-invoice-dollar fa-2x mb-3"></i>
-                                Laporan Biaya
+                                Budget
                             </a>
                         </div>
                         <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
-                                <i class="fas fa-cogs fa-2x mb-3"></i>
-                                Pengaturan
+                            <a href="{{ route('admin.production_plan.index') }}" class="btn btn-dashboard-outline w-100">
+                                <i class="fas fa-utensils fa-2x mb-3"></i>
+                                Rencana Produksi
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="{{ route('admin.recipient.index') }}" class="btn btn-dashboard-outline w-100">
+                                <i class="fas fa-school fa-2x mb-3"></i>
+                                Sekolah Penerima
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="{{ route('admin.salary.index') }}" class="btn btn-dashboard-outline w-100">
+                                <i class="fas fa-money-check-alt fa-2x mb-3"></i>
+                                Gaji Pegawai
                             </a>
                         </div>
                     </div>

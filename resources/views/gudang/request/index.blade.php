@@ -22,11 +22,11 @@
         <td data-label="Tanggal">{{ date('d M Y', strtotime($req->tanggal_request)) }}</td>
         <td data-label="Status">
             @if($req->status == 'Pending')
-                <span class="badge-status badge-pending">Menunggu Gudang</span>
+                <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Menunggu Gudang</span>
             @elseif($req->status == 'Approved')
-                <span class="badge-status badge-approved">Disetujui & Dikirim</span>
+                <span class="badge bg-success rounded-pill px-3 py-1">Disetujui &amp; Dikirim</span>
             @else
-                <span class="badge-status badge-finished">Selesai</span>
+                <span class="badge bg-secondary rounded-pill px-3 py-1">Selesai</span>
             @endif
         </td>
         <td data-label="Detail Permintaan">
@@ -35,11 +35,11 @@
                     @foreach($req->details as $detail)
                         @php
                             // Menghilangkan nol mubazir di belakang koma (misal 10.0000 -> 10)
-                            $qty = floatval($detail->qty_diminta); 
+                            $qty = floatval($detail->qty_diminta);
                             $satuan = $detail->item->satuan ?? '';
                         @endphp
                         <span class="detail-badge">
-                            {{ $detail->item->nama_barang ?? 'N/A' }} 
+                            {{ $detail->item->nama_barang ?? 'N/A' }}
                             <strong>{{ $qty }} {{ $satuan }}</strong>
                         </span>
                     @endforeach
@@ -51,7 +51,7 @@
         <td data-label="Aksi" class="text-center">
     @if($req->status == 'Pending')
         {{-- Hanya munculkan tombol Approve jika user adalah admin gudang --}}
-        @if(Auth::user()->role == 'gudang') 
+        @if(Auth::user()->role == 'gudang')
             <form action="{{ route('request.approve', $req->id) }}" method="POST" class="d-inline form-approve">
                 @csrf
                 <button type="submit" class="btn btn-action btn-success btn-sm">
@@ -83,7 +83,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         // Menangkap semua form dengan class .form-approve
         const forms = document.querySelectorAll('.form-approve');
-        
+
         forms.forEach(form => {
             form.addEventListener('submit', function (e) {
                 e.preventDefault(); // Stop form submit otomatis
@@ -111,7 +111,7 @@
                 });
             });
         });
-        
+
     });
 </script>
 </x-app-layout>
