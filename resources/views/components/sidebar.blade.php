@@ -118,13 +118,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('item.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('item.index') }}">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded hover-bg-light" href="#">
                         <i class="fas fa-users me-3 fs-5"></i> Kelola User
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('stok.index') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('stok.index') }}">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded hover-bg-light" href="#">
                         <i class="fas fa-bar-chart me-3 fs-5"></i> Laporan
                     </a>
                 </li>

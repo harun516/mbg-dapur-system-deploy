@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Master_Penerima\Recipient;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ProductionPlan;  
-use App\Models\Master_Penerima\Recipient;
-use App\Models\User;
 
 class Delivery extends Model
 {
@@ -20,7 +18,7 @@ class Delivery extends Model
         'foto_bukti',
         'status_enable',
         'waktu_antar',
-        'waktu_sampai'
+        'waktu_sampai',
     ];
 
     // Relasi ke Rencana Produksi (untuk ambil data Menu & Porsi)

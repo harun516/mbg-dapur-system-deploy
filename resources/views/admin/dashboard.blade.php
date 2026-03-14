@@ -25,7 +25,7 @@
                         <h1 class="display-4 fw-bold mb-3 text-white">
                             Rp {{ number_format($budget->saldo_saat_ini ?? 0, 0, ',', '.') }}
                         </h1>
-                        
+
                         <div class="d-flex align-items-center gap-4 mt-3">
                             <div class="flex-grow-1">
                                 <div class="d-flex justify-content-between small mb-2 text-white-75">
@@ -35,7 +35,7 @@
                                 <div class="admin-progress mb-2">
                                     <div class="admin-progress-bar" style="width: {{ ($persenTerpakai ?? 0) > 100 ? 100 : ($persenTerpakai ?? 0) }}%"></div>
                                 </div>
-                                
+
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="fas fa-store-alt text-white-50 small"></i>
                                     <small class="text-white-75">
@@ -45,7 +45,7 @@
                             </div>
                             <div class="text-end ps-4 border-start border-white-50">
                                 <small class="text-white-75 d-block">Total Modal Masuk</small>
-                                <span class="fw-bold text-white">Rp {{ number_format($budget->modal_awal ?? 0, 0, ',', '.') }}</span>
+                                <span class="fw-bold text-white">Rp {{ number_format($budget->saldo_saat_ini ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -121,27 +121,27 @@
                 <div class="card-body p-4">
                     <div class="row g-4 text-center">
                         <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
-                                <i class="fas fa-users fa-2x mb-3"></i>
-                                Kelola User
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
-                                <i class="fas fa-boxes fa-2x mb-3"></i>
-                                Master Barang
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
+                            <a href="{{ route('admin.budget.index') }}" class="btn btn-dashboard-outline w-100">
                                 <i class="fas fa-file-invoice-dollar fa-2x mb-3"></i>
-                                Laporan Biaya
+                                Budget
                             </a>
                         </div>
                         <div class="col-md-3 col-6">
-                            <a href="#" class="btn btn-dashboard-outline w-100">
-                                <i class="fas fa-cogs fa-2x mb-3"></i>
-                                Pengaturan
+                            <a href="{{ route('admin.production_plan.index') }}" class="btn btn-dashboard-outline w-100">
+                                <i class="fas fa-utensils fa-2x mb-3"></i>
+                                Rencana Produksi
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="{{ route('admin.recipient.index') }}" class="btn btn-dashboard-outline w-100">
+                                <i class="fas fa-school fa-2x mb-3"></i>
+                                Sekolah Penerima
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="{{ route('admin.salary.index') }}" class="btn btn-dashboard-outline w-100">
+                                <i class="fas fa-money-check-alt fa-2x mb-3"></i>
+                                Gaji Pegawai
                             </a>
                         </div>
                     </div>

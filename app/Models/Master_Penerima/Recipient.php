@@ -13,6 +13,6 @@ class Recipient extends Model
         'alamat',
         'no_hp_pic',
         'nama_pic',
-        'jumlah_porsi'
+        'jumlah_porsi',
     ];
 }

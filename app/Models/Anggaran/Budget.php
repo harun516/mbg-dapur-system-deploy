@@ -15,12 +15,12 @@ class Budget extends Model
         'modal_awal',
         'saldo_saat_ini',
         'saldo_belanja_gudang', // Kolom baru untuk jatah belanja gudang
-        'status_enable'         // Kolom status aktif/tidaknya budget ini
+        'status_enable',         // Kolom status aktif/tidaknya budget ini
     ];
 
     /**
-     * Casting tipe data agar angka desimal tetap akurat 
-     * dan status_enable terbaca sebagai true/false
+     * Casting tipe data agar angka desimal tetap akurat
+     * dan status_enable terbaca sebagai true/false.
      */
     protected $casts = [
         'modal_awal' => 'decimal:2',

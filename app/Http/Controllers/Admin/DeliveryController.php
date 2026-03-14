@@ -14,15 +14,17 @@ class DeliveryController extends Controller
     {
         $request->validate([
             'production_plan_id' => 'required|exists:production_plans,id',
-            'recipient_id'       => 'required|exists:recipients,id',
+            'recipient_id' => 'required|exists:recipients,id',
         ]);
 
         DB::beginTransaction();
+
         try {
             // 1. Cek apakah pengiriman untuk plan ini sudah pernah dibuat
             $exists = Delivery::where('production_plan_id', $request->production_plan_id)
-                              ->where('status_enable', 1)
-                              ->first();
+                ->where('status_enable', 1)
+                ->first()
+            ;
 
             if ($exists) {
                 return back()->with('error', 'Rencana produksi ini sudah dalam proses pengiriman.');
@@ -31,20 +33,21 @@ class DeliveryController extends Controller
             // 2. Simpan data ke tabel deliveries
             Delivery::create([
                 'production_plan_id' => $request->production_plan_id,
-                'recipient_id'       => $request->recipient_id,
-                'status'             => 'Menunggu Kurir',
-                'status_enable'      => $request->status_enable ?? 1,
+                'recipient_id' => $request->recipient_id,
+                'status' => 'Menunggu Kurir',
+                'status_enable' => $request->status_enable ?? 1,
             ]);
 
             // 3. Opsional: Update status di production_plans jika ingin dibedakan
             // ProductionPlan::where('id', $request->production_plan_id)->update(['status' => 'Selesai']);
 
             DB::commit();
+
             return back()->with('success', 'Data berhasil dikirim ke Dashboard Kurir!');
-            
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Gagal memproses pengiriman: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal memproses pengiriman: '.$e->getMessage());
         }
     }
 

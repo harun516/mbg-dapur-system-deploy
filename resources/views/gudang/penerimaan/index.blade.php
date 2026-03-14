@@ -1,17 +1,17 @@
 <x-app-layout>
 
+<div class="container-fluid py-4">
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0 fw-bold text-primary"><i class="fas fa-truck-loading me-2"></i> Daftar Penerimaan Barang</h4>
+            <a href="{{ route('penerimaan.input') }}" class="btn btn-primary shadow-sm rounded-pill px-4">
+                <i class="fas fa-plus me-1"></i> Tambah Penerimaan
+            </a>
+        </div>
 
-<div class="container-table">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Daftar Penerimaan Barang</h2>
-        <a href="{{ route('penerimaan.input') }}" class="btn btn-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tambah Penerimaan
-        </a>
-    </div>
-
-    <!-- FILTER YANG SUDAH DIRAPIHKAN -->
-    <form method="GET" action="{{ route('penerimaan.index') }}" class="filter-card">
-        <div class="row g-3 align-items-end">
+        <!-- FILTER -->
+        <form method="GET" action="{{ route('penerimaan.index') }}" class="bg-light p-3 rounded-3 mb-4 border">
+            <div class="row g-3 align-items-end">
             <div class="col-md-3 col-sm-6">
                 <label for="start_date">Tanggal Mulai</label>
                 <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
@@ -90,17 +90,16 @@
                 @endif
             @empty
                 <tr>
-                    <td colspan="11" class="text-center py-5 text-muted">
-                        <i class="fas fa-box-open fa-3x mb-3 d-block"></i>
-                        Belum ada data penerimaan barang
-                    </td>
+                    <td colspan="10" class="text-center py-4 text-muted">Belum ada riwayat penerimaan barang.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div class="mt-4">
         {{ $penerimaans->links() }}
+    </div>
     </div>
 </div>
 </x-app-layout>

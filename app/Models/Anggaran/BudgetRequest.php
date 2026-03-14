@@ -11,7 +11,7 @@ class BudgetRequest extends Model
     use HasFactory;
 
     /**
-     * Nama tabel di database (Opsional jika nama tabel jamak/plural)
+     * Nama tabel di database (Opsional jika nama tabel jamak/plural).
      */
     protected $table = 'budget_requests';
 
@@ -39,7 +39,7 @@ class BudgetRequest extends Model
 
     /**
      * Relasi: Satu permintaan budget (BudgetRequest) dimiliki oleh satu User.
-     * Jadi nanti kamu bisa panggil: $request->user->name
+     * Jadi nanti kamu bisa panggil: $request->user->name.
      */
     public function user()
     {
@@ -47,15 +47,15 @@ class BudgetRequest extends Model
     }
 
     /**
-     * Helper untuk cek status dengan cepat (Opsional)
+     * Helper untuk cek status dengan cepat (Opsional).
      */
     public function isApproved()
     {
-        return $this->status === 'approved';
+        return 'approved' === $this->status;
     }
 
     public function isPending()
     {
-        return $this->status === 'pending';
+        return 'pending' === $this->status;
     }
 }

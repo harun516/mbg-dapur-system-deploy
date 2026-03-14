@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Production extends Model
 {
-
     protected $fillable = ['plan_id', 'menu_id', 'jumlah_porsi', 'tanggal_produksi', 'status', 'user_id'];
 
     public function menu()

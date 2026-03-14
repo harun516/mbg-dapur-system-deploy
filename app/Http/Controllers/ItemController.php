@@ -11,6 +11,7 @@ class ItemController extends Controller
     {
         // Hanya tampilkan yang aktif
         $items = Item::aktif()->latest()->get();
+
         return view('gudang.item.index', compact('items'));
     }
 
@@ -24,7 +25,7 @@ class ItemController extends Controller
         Item::create([
             'nama_barang' => $request->nama_barang,
             'satuan' => $request->satuan,
-            'status_enable' => 1
+            'status_enable' => 1,
         ]);
 
         return back()->with('success', 'Bahan baku berhasil ditambahkan!');
@@ -35,7 +36,7 @@ class ItemController extends Controller
     {
         $item = Item::findOrFail($id);
         $item->update(['status_enable' => 0]);
-        
+
         return back()->with('success', 'Bahan baku berhasil dinonaktifkan.');
     }
 }

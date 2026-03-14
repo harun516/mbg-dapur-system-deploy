@@ -8,7 +8,8 @@ class MenuRequirement extends Model
 {
     protected $fillable = ['menu_id', 'item_id', 'qty_per_porsi'];
 
-    public function item() {
+    public function item()
+    {
         return $this->belongsTo(Item::class);
     }
 }

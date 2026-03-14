@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Stock; 
+use App\Models\Stock;
 use Illuminate\Http\Request;
 
 class ItemBatchController extends Controller
@@ -14,8 +14,9 @@ class ItemBatchController extends Controller
         $batches = Stock::with('item')
             ->where('qty_sisa', '>', 0)
             ->orderBy('expired_date', 'asc')
-            ->get();
-            
+            ->get()
+        ;
+
         return view('gudang.stok', compact('batches'));
     }
 
@@ -24,6 +25,7 @@ class ItemBatchController extends Controller
     {
         // Menampilkan semua dari tabel stocks
         $batches = Stock::with('item')->latest()->get();
+
         return view('gudang.stok_opname', compact('batches'));
     }
 
@@ -31,7 +33,7 @@ class ItemBatchController extends Controller
     {
         $request->validate([
             'qty_fisik' => 'required|numeric|min:0',
-            'keterangan' => 'required|string|max:255'
+            'keterangan' => 'required|string|max:255',
         ]);
 
         $batch = Stock::findOrFail($id); // Ganti ke Stock

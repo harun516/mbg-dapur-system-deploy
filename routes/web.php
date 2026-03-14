@@ -1,20 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ItemBatchController;
-use App\Http\Controllers\PenerimaanController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\ProductionController;
-use App\Http\Controllers\RequestController;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\BudgetController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DeliveryController;
+use App\Http\Controllers\Admin\ProductionPlanController;
+use App\Http\Controllers\Admin\RecipientController;
 use App\Http\Controllers\Admin\SalaryController;
 use App\http\Controllers\Gudang\GudangSaldoController;
-use App\Http\Controllers\Admin\RecipientController;
-use App\Http\Controllers\Admin\ProductionPlanController;
-use App\Http\Controllers\Admin\DeliveryController;
+use App\Http\Controllers\ItemBatchController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\Kurir\CourierDashboardController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PenerimaanController;
+use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RequestController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 // ==================== ROOT & AUTH ==================== //
 Route::get('/', function () {
     return redirect()->route('login');
@@ -28,59 +31,57 @@ Route::get('/dashboard', function () {
     $role = Auth::user()->role ?? 'user';
 
     return match (strtolower($role)) {
-        'admin'   => redirect()->route('admin.dashboard'),
-        'gudang'  => redirect()->route('gudang.dashboard'),
-        'dapur'   => redirect()->route('dapur.dashboard'),
-        'kurir'   => redirect()->route('kurir.dashboard'),
-        default   => view('dashboard'),
+        'admin' => redirect()->route('admin.dashboard'),
+        'gudang' => redirect()->route('gudang.dashboard'),
+        'dapur' => redirect()->route('dapur.dashboard'),
+        'kurir' => redirect()->route('kurir.dashboard'),
+        default => view('dashboard'),
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // ==================== ROUTE ROLE-BASED ==================== //
 Route::middleware(['auth'])->group(function () {
-
     // Profile (Umum)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-// --- ADMIN ---///
+    // --- ADMIN ---///
     Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-    // print surat jalan
-    Route::get('/delivery/{id}/print', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'printSurat'])->name('delivery.print');
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        // print surat jalan
+        Route::get('/delivery/{id}/print', [CourierDashboardController::class, 'printSurat'])->name('delivery.print');
 
-    // Budget Management
-    Route::get('/budget', [BudgetController::class, 'index'])->name('budget.index');
-    Route::post('/budget', [BudgetController::class, 'store'])->name('budget.store');
+        // Budget Management
+        Route::get('/budget', [BudgetController::class, 'index'])->name('budget.index');
+        Route::post('/budget', [BudgetController::class, 'store'])->name('budget.store');
 
-    // Allocation
-    Route::post('/budget/allocation', [BudgetController::class, 'storeAllocation'])->name('budget.allocation');
-    Route::delete('/budget/allocation/{id}', [BudgetController::class, 'destroyAllocation'])->name('budget.destroyAllocation');
+        // Allocation
+        Route::post('/budget/allocation', [BudgetController::class, 'storeAllocation'])->name('budget.allocation');
+        Route::delete('/budget/allocation/{id}', [BudgetController::class, 'destroyAllocation'])->name('budget.destroyAllocation');
 
-    // Budget Requests (Gudang ke Admin) - SEKARANG JADI admin.budget.request
-    Route::get('/budget/request', [BudgetController::class, 'requestIndex'])->name('budget.request');
-    Route::post('/budget/request/approve/{id}', [BudgetController::class, 'approveRequest'])->name('budget.approve');
-    
-    // Management Recipient
-    Route::get('/recipient', [RecipientController::class, 'index'])->name('recipient.index');
-    Route::get('/recipient/create', [RecipientController::class, 'create'])->name('recipient.create');
-    Route::post('/recipient', [RecipientController::class, 'store'])->name('recipient.store');
-    Route::get('/recipient/{id}/edit', [RecipientController::class, 'edit'])->name('recipient.edit');
-    Route::put('/recipient/{id}', [RecipientController::class, 'update'])->name('recipient.update');
-    
-    // production plan
-    Route::resource('production_plan', ProductionPlanController::class);
-    Route::patch('production_plan/{id}/update-status', [ProductionPlanController::class, 'updateStatus'])->name('production_plan.update-status');
-    Route::get('/production_plan/{id}/edit', [ProductionPlanController::class, 'edit'])->name('production_plan.edit');
-    Route::put('/production_plan/{id}', [ProductionPlanController::class, 'update'])->name('production_plan.update');
-    Route::get('/production_plan/create', [ProductionPlanController::class, 'create'])->name('production_plan.create');
-    // Delivery
-    Route::post('/delivery/store', [App\Http\Controllers\Admin\DeliveryController::class, 'store'])->name('delivery.store');
-    Route::post('/delivery/disable/{id}', [App\Http\Controllers\Admin\DeliveryController::class, 'disable'])->name('delivery.disable');
+        // Budget Requests (Gudang ke Admin) - SEKARANG JADI admin.budget.request
+        Route::get('/budget/request', [BudgetController::class, 'requestIndex'])->name('budget.request');
+        Route::post('/budget/request/approve/{id}', [BudgetController::class, 'approveRequest'])->name('budget.approve');
 
+        // Management Recipient
+        Route::get('/recipient', [RecipientController::class, 'index'])->name('recipient.index');
+        Route::get('/recipient/create', [RecipientController::class, 'create'])->name('recipient.create');
+        Route::post('/recipient', [RecipientController::class, 'store'])->name('recipient.store');
+        Route::get('/recipient/{id}/edit', [RecipientController::class, 'edit'])->name('recipient.edit');
+        Route::put('/recipient/{id}', [RecipientController::class, 'update'])->name('recipient.update');
 
-    // Salary
+        // production plan
+        Route::resource('production_plan', ProductionPlanController::class);
+        Route::patch('production_plan/{id}/update-status', [ProductionPlanController::class, 'updateStatus'])->name('production_plan.update-status');
+        Route::get('/production_plan/{id}/edit', [ProductionPlanController::class, 'edit'])->name('production_plan.edit');
+        Route::put('/production_plan/{id}', [ProductionPlanController::class, 'update'])->name('production_plan.update');
+        Route::get('/production_plan/create', [ProductionPlanController::class, 'create'])->name('production_plan.create');
+        // Delivery
+        Route::post('/delivery/store', [DeliveryController::class, 'store'])->name('delivery.store');
+        Route::post('/delivery/disable/{id}', [DeliveryController::class, 'disable'])->name('delivery.disable');
+
+        // Salary
         Route::get('/salary', [SalaryController::class, 'index'])->name('salary.index');
         Route::post('/salary/config', [SalaryController::class, 'storeConfig'])->name('salary.storeConfig');
         Route::put('/salary/config/{id}', [SalaryController::class, 'updateConfig'])->name('salary.updateConfig');
@@ -88,7 +89,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/salary/payment', [SalaryController::class, 'processPayment'])->name('salary.payment');
     });
 
-// --- GUDANG ---////
+    // --- GUDANG ---////
     Route::middleware('role:gudang')->prefix('gudang')->group(function () {
         Route::get('/', [App\Http\Controllers\Gudang\DashboardController::class, 'index'])->name('gudang.dashboard');
 
@@ -103,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/stok-opname/{id}', [ItemBatchController::class, 'processOpname'])->name('stok.opname.process');
 
         // Saldo Anggaran
-            Route::middleware(['auth', 'role:gudang'])->prefix('gudang')->name('gudang.')->group(function () {
+        Route::middleware(['auth', 'role:gudang'])->prefix('gudang')->name('gudang.')->group(function () {
             Route::get('/saldo', [GudangSaldoController::class, 'index'])->name('saldo.index');
             Route::post('/saldo/request', [GudangSaldoController::class, 'storeRequest'])->name('saldo.request');
         });
@@ -146,21 +147,19 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-// --- KURIR ---///////////////////////////
+    // --- KURIR ---///////////////////////////
     Route::middleware(['auth', 'role:kurir'])->prefix('kurir')->name('kurir.')->group(function () {
-        
         // Dashboard Utama (Sekarang mengarah ke Controller, bukan langsung view)
-        Route::get('/dashboard', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [CourierDashboardController::class, 'index'])->name('dashboard');
         // print
-        Route::get('/delivery/{id}/print', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'printSurat'])->name('delivery.print');
-        
+        Route::get('/delivery/{id}/print', [CourierDashboardController::class, 'printSurat'])->name('delivery.print');
+
         // Redirect jika akses root kurir (opsional)
         Route::get('/', function () { return redirect()->route('kurir.dashboard'); });
 
         // Aksi Logistik
-        Route::post('/delivery/{id}/take', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'takeJob'])->name('delivery.take');
-        Route::post('/delivery/{id}/complete', [App\Http\Controllers\Kurir\CourierDashboardController::class, 'completeJob'])->name('delivery.complete');
-        
+        Route::post('/delivery/{id}/take', [CourierDashboardController::class, 'takeJob'])->name('delivery.take');
+        Route::post('/delivery/{id}/complete', [CourierDashboardController::class, 'completeJob'])->name('delivery.complete');
     });
 });
 
