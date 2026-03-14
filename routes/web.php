@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\ProductionPlanController;
 use App\Http\Controllers\Admin\RecipientController;
 use App\Http\Controllers\Admin\SalaryController;
+use App\Http\Controllers\Admin\UserController;
 use App\http\Controllers\Gudang\GudangSaldoController;
 use App\Http\Controllers\ItemBatchController;
 use App\Http\Controllers\ItemController;
@@ -70,6 +71,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/recipient', [RecipientController::class, 'store'])->name('recipient.store');
         Route::get('/recipient/{id}/edit', [RecipientController::class, 'edit'])->name('recipient.edit');
         Route::put('/recipient/{id}', [RecipientController::class, 'update'])->name('recipient.update');
+
+        // User Management
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::patch('/users/{id}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
 
         // production plan
         Route::resource('production_plan', ProductionPlanController::class);

@@ -118,8 +118,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded hover-bg-light" href="#">
-                        <i class="fas fa-users me-3 fs-5"></i> Kelola User
+                    <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+                        <i class="fas fa-users me-3"></i> Kelola User
                     </a>
                 </li>
 

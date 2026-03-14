@@ -28,7 +28,7 @@
                         </div>
 
                         <!-- Pilihan Role (tetap persis seperti yang kamu punya) -->
-                        <div class="input-group">
+                        <!-- <div class="input-group">
                             <i class="fas fa-user-shield"></i>
                             <select name="role" required>
                                 <option value="">-- Pilih Role --</option>
@@ -38,7 +38,7 @@
                                 <option value="kurir" {{ old('role') == 'kurir' ? 'selected' : '' }}>Kurir</option>
                             </select>
                             @error('role') <span class="text-danger small">{{ $message }}</span> @enderror
-                        </div>
+                        </div> -->
 
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
