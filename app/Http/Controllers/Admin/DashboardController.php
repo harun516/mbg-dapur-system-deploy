@@ -19,7 +19,7 @@ class DashboardController extends Controller
 
         // 2. Hitung Total Alokasi yang sedang aktif
         $totalAlokasi = BudgetAllocation::where('status_enable', 1)->sum('nominal');
-        $modalAwal = $budget->modal_awal ?? 0;
+        $modalAwal = $budget->saldo_saat_ini ?? 0;
         $persenTerpakai = ($modalAwal > 0) ? ($totalAlokasi / $modalAwal) * 100 : 0;
         $sisaBebas = $budget->saldo_saat_ini;
 

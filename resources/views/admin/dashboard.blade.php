@@ -25,7 +25,7 @@
                         <h1 class="display-4 fw-bold mb-3 text-white">
                             Rp {{ number_format($budget->saldo_saat_ini ?? 0, 0, ',', '.') }}
                         </h1>
-                        
+
                         <div class="d-flex align-items-center gap-4 mt-3">
                             <div class="flex-grow-1">
                                 <div class="d-flex justify-content-between small mb-2 text-white-75">
@@ -35,7 +35,7 @@
                                 <div class="admin-progress mb-2">
                                     <div class="admin-progress-bar" style="width: {{ ($persenTerpakai ?? 0) > 100 ? 100 : ($persenTerpakai ?? 0) }}%"></div>
                                 </div>
-                                
+
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="fas fa-store-alt text-white-50 small"></i>
                                     <small class="text-white-75">
@@ -45,7 +45,7 @@
                             </div>
                             <div class="text-end ps-4 border-start border-white-50">
                                 <small class="text-white-75 d-block">Total Modal Masuk</small>
-                                <span class="fw-bold text-white">Rp {{ number_format($budget->modal_awal ?? 0, 0, ',', '.') }}</span>
+                                <span class="fw-bold text-white">Rp {{ number_format($budget->saldo_saat_ini ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
