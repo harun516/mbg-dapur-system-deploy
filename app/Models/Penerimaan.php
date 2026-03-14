@@ -10,13 +10,22 @@ class Penerimaan extends Model
         'no_penerimaan',
         'tanggal',
         'supplier',
-        'user_id'
+        'user_id',
     ];
+
+    public function details()
+    {
+        return $this->hasMany(PenerimaanDetail::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     protected static function booted()
     {
         static::creating(function ($model) {
-
             $last = self::latest()->first();
 
             if (!$last) {
@@ -26,16 +35,7 @@ class Penerimaan extends Model
                 $number = $lastNumber + 1;
             }
 
-            $model->no_penerimaan = 'PNR-A' . str_pad($number, 3, '0', STR_PAD_LEFT);
+            $model->no_penerimaan = 'PNR-A'.str_pad($number, 3, '0', STR_PAD_LEFT);
         });
-    }
-
-    public function details()
-    {
-        return $this->hasMany(PenerimaanDetail::class);
-    }
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Anggaran\Budget;
-use App\Models\Anggaran\BudgetRequest;
 use App\Models\Anggaran\BudgetAllocation;
+use App\Models\Anggaran\BudgetRequest;
 use App\Models\Anggaran\BudgetTransaction;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BudgetController extends Controller
@@ -21,13 +21,14 @@ class BudgetController extends Controller
                 'modal_awal' => 0,
                 'saldo_saat_ini' => 0,
                 'saldo_belanja_gudang' => 0,
-                'status_enable' => 1
+                'status_enable' => 1,
             ]
         );
 
         $transactions = BudgetTransaction::where('status_enable', 1)
-                                         ->orderBy('created_at', 'desc')
-                                         ->get();
+            ->orderBy('created_at', 'desc')
+            ->get()
+        ;
 
         $allocations = BudgetAllocation::where('status_enable', 1)->get();
         $totalAlokasi = $allocations->sum('nominal');
@@ -53,7 +54,7 @@ class BudgetController extends Controller
             'nominal' => 'required|numeric|min:1',
             'kategori' => 'required|string',
             'sumber_dana' => 'required|string',
-            'keterangan' => 'nullable|string'
+            'keterangan' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -66,12 +67,12 @@ class BudgetController extends Controller
                 'sumber_dana' => $request->sumber_dana,
                 'nominal' => $request->nominal,
                 'keterangan' => $request->keterangan,
-                'status_enable' => 1
+                'status_enable' => 1,
             ]);
 
             $budget->increment('saldo_saat_ini', $request->nominal);
 
-            if ($budget->modal_awal == 0) {
+            if (0 == $budget->modal_awal) {
                 $budget->update(['modal_awal' => $request->nominal]);
             }
         });
@@ -84,7 +85,7 @@ class BudgetController extends Controller
         $request->validate([
             'nama_alokasi' => 'required|string',
             'nominal' => 'required|numeric|min:1',
-            'keterangan' => 'nullable|string'
+            'keterangan' => 'nullable|string',
         ]);
 
         try {
@@ -94,12 +95,14 @@ class BudgetController extends Controller
             // Validasi Budget ada
             if (!$budget) {
                 DB::rollBack();
+
                 return redirect()->back()->with('error', 'Data budget tidak ditemukan!');
             }
 
             // Validasi Saldo Cukup
             if ($request->nominal > $budget->saldo_saat_ini) {
                 DB::rollBack();
+
                 return redirect()->back()->with('error', 'Saldo utama tidak mencukupi untuk alokasi ini!');
             }
 
@@ -107,7 +110,7 @@ class BudgetController extends Controller
                 'nama_alokasi' => $request->nama_alokasi,
                 'nominal' => $request->nominal,
                 'keterangan' => $request->keterangan,
-                'status_enable' => 1
+                'status_enable' => 1,
             ]);
 
             // Penyesuaian Kategori agar sesuai Label Biru di Blade
@@ -123,21 +126,22 @@ class BudgetController extends Controller
             }
 
             BudgetTransaction::create([
-                'budget_id'     => $budget->id,
-                'tipe'          => 'keluar',
-                'kategori'      => $kategori,
-                'sumber_dana'   => $request->nama_alokasi,
-                'nominal'       => $request->nominal,
-                'keterangan'    => $request->keterangan ?? "Alokasi dana untuk " . $request->nama_alokasi,
-                'status_enable' => 1
+                'budget_id' => $budget->id,
+                'tipe' => 'keluar',
+                'kategori' => $kategori,
+                'sumber_dana' => $request->nama_alokasi,
+                'nominal' => $request->nominal,
+                'keterangan' => $request->keterangan ?? 'Alokasi dana untuk '.$request->nama_alokasi,
+                'status_enable' => 1,
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', $pesan);
 
+            return redirect()->back()->with('success', $pesan);
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -159,9 +163,11 @@ class BudgetController extends Controller
             $allocation->delete();
 
             DB::commit();
+
             return redirect()->back()->with('success', 'Alokasi berhasil dihapus dan saldo dikembalikan.');
         } catch (\Exception $e) {
             DB::rollback();
+
             return redirect()->back()->with('error', 'Gagal menghapus alokasi.');
         }
     }
@@ -182,7 +188,7 @@ class BudgetController extends Controller
             $budgetRequest = BudgetRequest::findOrFail($id);
             $budget = Budget::lockForUpdate()->first();
 
-            if ($budgetRequest->status !== 'pending') {
+            if ('pending' !== $budgetRequest->status) {
                 return back()->with('error', 'Permintaan ini sudah diproses sebelumnya.');
             }
 
@@ -194,34 +200,35 @@ class BudgetController extends Controller
             $budget->increment('saldo_belanja_gudang', $budgetRequest->nominal);
 
             BudgetAllocation::create([
-                'nama_alokasi' => 'Persetujuan Dana: ' . $budgetRequest->perihal,
+                'nama_alokasi' => 'Persetujuan Dana: '.$budgetRequest->perihal,
                 'nominal' => $budgetRequest->nominal,
-                'keterangan' => 'Disetujui dari request ' . $budgetRequest->user->name,
-                'status_enable' => 1
+                'keterangan' => 'Disetujui dari request '.$budgetRequest->user->name,
+                'status_enable' => 1,
             ]);
 
             $budgetRequest->update([
                 'status' => 'approved',
-                'catatan' => 'Disetujui oleh Admin pada ' . now()->format('d/m/Y H:i')
+                'catatan' => 'Disetujui oleh Admin pada '.now()->format('d/m/Y H:i'),
             ]);
 
             // Penyesuaian Kategori agar label seragam dengan alokasi manual
             BudgetTransaction::create([
-                'budget_id'     => $budget->id,
-                'tipe'          => 'keluar',
-                'kategori'      => 'Kirim Saldo ke gudang',
-                'sumber_dana'   => 'Request: ' . $budgetRequest->user->name,
-                'nominal'       => $budgetRequest->nominal,
-                'keterangan'    => 'Persetujuan request: ' . $budgetRequest->perihal,
-                'status_enable' => 1
+                'budget_id' => $budget->id,
+                'tipe' => 'keluar',
+                'kategori' => 'Kirim Saldo ke gudang',
+                'sumber_dana' => 'Request: '.$budgetRequest->user->name,
+                'nominal' => $budgetRequest->nominal,
+                'keterangan' => 'Persetujuan request: '.$budgetRequest->perihal,
+                'status_enable' => 1,
             ]);
 
             DB::commit();
-            return back()->with('success', 'Request disetujui. Saldo belanja gudang bertambah!');
 
+            return back()->with('success', 'Request disetujui. Saldo belanja gudang bertambah!');
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 }

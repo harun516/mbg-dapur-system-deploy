@@ -23,7 +23,7 @@ class Stock extends Model
 
     /**
      * Relasi ke Master Item (Bahan Baku)
-     * Ini supaya di stok.blade.php kamu bisa panggil $batch->item->nama_barang
+     * Ini supaya di stok.blade.php kamu bisa panggil $batch->item->nama_barang.
      */
     public function item()
     {

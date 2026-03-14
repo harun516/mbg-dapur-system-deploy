@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +15,7 @@ class ProductionPlan extends Model
         'total_porsi_target',
         'status',
         'catatan_admin',
-        'status_enable'
+        'status_enable',
     ];
 
     // Relasi balik ke Menu (Master Resep)
@@ -30,10 +29,9 @@ class ProductionPlan extends Model
     {
         return $query->where('status_enable', 1);
     }
-    
+
     public function productions()
     {
-
-    return $this->hasMany(Production::class, 'plan_id'); 
+        return $this->hasMany(Production::class, 'plan_id');
     }
 }

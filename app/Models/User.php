@@ -3,16 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Anggaran\BudgetRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use App\Models\Anggaran\BudgetRequest;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-       'name',
+        'name',
         'email',
         'password',
         'role',
@@ -36,6 +36,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function budgetRequests()
+    {
+        return $this->hasMany(BudgetRequest::class, 'user_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -47,8 +52,5 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-    public function budgetRequests() {
-    return $this->hasMany(BudgetRequest::class, 'user_id');
     }
 }
