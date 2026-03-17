@@ -34,14 +34,14 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,gudang,dapur,kurir'],
+            // 'role' => ['required', 'in:admin,gudang,dapur,kurir'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => 'kurir', // Paksa semua yang daftar jadi kurir
         ]);
 
         event(new Registered($user));

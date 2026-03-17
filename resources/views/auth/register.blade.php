@@ -23,7 +23,7 @@
         </div>
 
         <!-- Tambahan Pemilihan Role -->
-        <div class="mb-4">
+        <!-- <div class="mb-4">
             <label for="role" class="form-label">Role</label>
             <select id="role" name="role" class="form-select @error('role') is-invalid @enderror" required>
                 <option value="">-- Pilih Role --</option>
@@ -35,7 +35,7 @@
             @error('role')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-        </div>
+        </div> -->
 
         <div class="mb-4">
             <label for="password" class="form-label">Password</label>
