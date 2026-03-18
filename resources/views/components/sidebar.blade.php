@@ -1,22 +1,19 @@
-<nav class="bg-white text-dark vh-100 position-fixed top-0 start-0 shadow-sm border-end border-light" style="width: 260px; z-index: 1000; overflow-y: auto; transition: all 0.3s ease;" id="sidebar">
-    
-    <div class="sidebar-header pt-5 pb-3 px-4">
-        <div class="d-flex align-items-center justify-content-center mb-3">
-            <div class="logo-wrapper-sm me-3">
-                <img src="{{ asset('Logo.png') }}" alt="Logo" class="sidebar-logo-sm">
+<div class="offcanvas offcanvas-start bg-white" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header border-bottom py-3">
+        <div class="d-flex align-items-center gap-2">
+            <div class="logo-wrapper-sm">
+                <img src="{{ asset('Logo.png') }}" alt="Logo" class="sidebar-logo-sm" style="width: 36px;">
             </div>
-        
-            <div class="brand-text">
-                <h5 class="mb-0 fw-bold text-primary" style="font-size: 1.1rem; line-height: 1.2;">DAPURKU</h5>
+            <div>
+                <h6 class="mb-0 fw-bold text-primary">DAPURKU</h6>
                 <small class="text-muted d-block" style="font-size: 0.7rem;">Sistem Terintegrasi</small>
             </div>
         </div>
-        <hr class="mt-4 mb-2" style="border-top: 2px solid #e5e7eb; opacity: 1;">
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    
 
-    <div class="p-3">
-        <ul class="nav flex-column gap-1">
+    <div class="offcanvas-body p-0">
+        <ul class="nav flex-column gap-1 p-3">
             <!-- <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('dashboard') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('dashboard') }}">
                     <i class="fas fa-tachometer-alt me-3 fs-5"></i> Dashboard
@@ -71,7 +68,7 @@
                  <div class="text-muted small fw-bold text-uppercase mt-3 mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">Managemen Dapur</div>
                 <li class="nav-item">
                 </li>
-                
+
                  <li class="nav-item">
                     <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('production.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('production.index') }}">
                         <i class="fas fa-bar-chart me-3 fs-5"></i> Produksi
@@ -104,14 +101,14 @@
                         <i class="fas fa-motorcycle me-3 fs-5"></i> Dashboard Kurir
                     </a>
                 </li>
-                
+
             @endif
 
         <!====================================== ROLE ADMIN =====================================>
             @if(in_array(auth()->user()->role, ['admin']))
-                
+
             <div class="text-muted small fw-bold text-uppercase mt-3 mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">Manajemen Admin</div>
-                
+
             <li class="nav-item">
                     <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.dashboard') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt me-3 fs-5"></i> Dashboard Admin
@@ -158,4 +155,4 @@
             </li>
         </ul>
     </div>
-</nav>
+</div>

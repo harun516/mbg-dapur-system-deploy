@@ -1,8 +1,11 @@
 <nav class="navbar bg-white border-bottom px-3 px-md-4 py-0 shadow-sm" style="height:60px; position:sticky; top:0; z-index:999;">
-    <!-- Hamburger Toggle (always visible) -->
-    <button id="sidebarToggleTop"
-            class="btn btn-sm btn-outline-secondary rounded-2 me-3 d-flex align-items-center justify-content-center"
+    <!-- Hamburger Toggle - Bootstrap Offcanvas -->
+    <button class="btn btn-sm btn-outline-secondary rounded-2 me-3 d-flex align-items-center justify-content-center"
             style="width:38px;height:38px;"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#sidebarOffcanvas"
+            aria-controls="sidebarOffcanvas"
             title="Toggle Sidebar">
         <i class="fas fa-bars fs-6"></i>
     </button>
