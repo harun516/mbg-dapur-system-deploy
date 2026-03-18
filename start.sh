@@ -3,10 +3,6 @@ set -e
 
 # Parse DATABASE_URL jika tersedia
 if [ -n "$DATABASE_URL" ]; then
-    # Extract database credentials dari DATABASE_URL
-    # Format: postgresql://user:password@host:port/dbname
-    DB_REGEX='postgres(?:ql)?://([^:]+):([^@]+)@([^:/]+):([0-9]+)/(.+)'
-
     if [[ $DATABASE_URL =~ postgresql://([^:]+):([^@]+)@([^:/]+):([0-9]+)/(.+) ]]; then
         export DB_USERNAME="${BASH_REMATCH[1]}"
         export DB_PASSWORD="${BASH_REMATCH[2]}"
@@ -22,10 +18,10 @@ echo "  Port: $DB_PORT"
 echo "  Database: $DB_DATABASE"
 echo "  User: $DB_USERNAME"
 
-# Run migrations jika belum ada migrations table
-echo "Checking database migrations..."
+# Run migrations
+echo "Running migrations..."
 php artisan migrate --force 2>/dev/null || true
 
-# Start PHP server
+# Start PHP server dengan router script untuk static files
 echo "Starting application on port 8080..."
-php -S 0.0.0.0:8080 -t public/
+php -S 0.0.0.0:8080 -t public/ server.php
