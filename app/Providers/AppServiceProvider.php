@@ -18,20 +18,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
-
-        // Auto-run migration di production
-        if (app()->environment('production')) {
-            \DB::statement("SET SESSION sql_mode='STRICT_TRANS_TABLES'");
-
-            // Check jika migrations table blum ada, jalankan migrate
-            try {
-                if (!Schema::hasTable('migrations')) {
-                    // Jalankan migration
-                    \Artisan::call('migrate', ['--force' => true]);
-                }
-            } catch (\Exception $e) {
-                \Log::error('Migration error: ' . $e->getMessage());
-            }
-        }
     }
 }

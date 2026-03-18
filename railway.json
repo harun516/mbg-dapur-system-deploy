@@ -4,6 +4,6 @@
         "buildCommand": "composer install --optimize-autoloader --no-dev && npm ci && npm run build && php artisan storage:link"
     },
     "deploy": {
-        "startCommand": "php -S 0.0.0.0:8080 -t public/"
+        "startCommand": "bash start.sh"
     }
 }
