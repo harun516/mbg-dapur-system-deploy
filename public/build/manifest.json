@@ -1,6 +1,10 @@
 {
+  "_vendor-BOdPfEBJ.js": {
+    "file": "assets/vendor-BOdPfEBJ.js",
+    "name": "vendor"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-bnmMoLHY.css",
+    "file": "assets/app-p8HmWxUL.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -8,10 +12,47 @@
       "app.css"
     ]
   },
+  "resources/css/auth.css": {
+    "file": "assets/auth-DlQ3HTTB.css",
+    "src": "resources/css/auth.css",
+    "isEntry": true,
+    "name": "auth",
+    "names": [
+      "auth.css"
+    ]
+  },
+  "resources/css/sidebar.css": {
+    "file": "assets/sidebar-BK75AJxG.css",
+    "src": "resources/css/sidebar.css",
+    "isEntry": true,
+    "name": "sidebar",
+    "names": [
+      "sidebar.css"
+    ]
+  },
   "resources/js/app.js": {
-    "file": "assets/app-CBbTb_k3.js",
+    "file": "assets/app-BRavQZkl.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor-BOdPfEBJ.js",
+      "resources/js/dapur/menu/notif-menu.js"
+    ]
+  },
+  "resources/js/dapur/menu/notif-menu.js": {
+    "file": "assets/notif-menu-Ckc2Svh4.js",
+    "name": "notif-menu",
+    "src": "resources/js/dapur/menu/notif-menu.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor-BOdPfEBJ.js"
+    ]
+  },
+  "resources/js/sidebar-toggle.js": {
+    "file": "assets/sidebar-toggle-DRJtjgHv.js",
+    "name": "sidebar-toggle",
+    "src": "resources/js/sidebar-toggle.js",
     "isEntry": true
   }
 }
