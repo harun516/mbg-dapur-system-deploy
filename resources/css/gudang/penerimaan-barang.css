@@ -1,0 +1,161 @@
+/* =======STYLE TABEL PENERIMAAN BARANG======== */
+    /* Custom CSS konsisten + upgrade filter */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+    }
+    .container-table {
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        font-size: 24px;
+        margin-bottom: 24px;
+        color: #007bff;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+
+    /* FILTER UPGRADE */
+    .filter-card {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 24px;
+        margin-bottom: 32px;
+    }
+    .filter-card label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #495057;
+        display: block;
+    }
+    .filter-card .form-control,
+    .filter-card select.form-control {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 12px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+    .filter-card .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+    .filter-card .btn {
+        padding: 10px 24px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.3s;
+    }
+    .filter-card .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+    .filter-card .btn-primary:hover {
+        background-color: #0069d9;
+        transform: translateY(-1px);
+    }
+    .filter-card .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+    }
+    .filter-card .btn-secondary:hover {
+        background-color: #5a6268;
+        transform: translateY(-1px);
+    }
+
+    /* Table CSS tetap sama seperti sebelumnya */
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .table thead th {
+        background-color: #007bff;
+        color: #ffffff;
+        font-weight: 600;
+        text-align: center;
+        padding: 12px 10px;
+        border: 1px solid #dee2e6;
+        vertical-align: middle;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.3px;
+    }
+    .table thead th:first-child,
+    .table thead th:nth-child(2),
+    .table thead th:nth-child(3),
+    .table thead th:nth-child(4) {
+        text-align: left;
+    }
+    .table tbody td {
+        padding: 12px 10px;
+        vertical-align: middle;
+        border: 1px solid #dee2e6;
+        font-size: 0.95rem;
+    }
+    .table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+    .table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .table .table-secondary {
+        background-color: #e2e3e5 !important;
+        font-weight: 600;
+    }
+    .badge.bg-light {
+        background-color: #e9ecef !important;
+        color: #495057 !important;
+        font-weight: 500;
+        padding: 0.4em 0.8em;
+    }
+    .text-primary { color: #007bff !important; }
+    .text-muted { color: #6c757d !important; }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .container-table { padding: 20px; margin: 20px 10px; }
+        .filter-card { padding: 16px; }
+        .filter-card .row.g-3 { gap: 16px !important; }
+        .table thead { display: none; }
+        .table tbody tr {
+            display: block;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .table tbody td {
+            display: flex;
+            justify-content: space-between;
+            border: none;
+            border-bottom: 1px solid #eee;
+            padding: 12px 16px;
+        }
+        .table tbody td:last-child { border-bottom: none; }
+        .table tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #495057;
+            flex: 0 0 45%;
+            margin-right: 12px;
+        }
+        .table .table-secondary td {
+            justify-content: flex-end;
+            font-size: 1rem;
+        }
+    }
+
+    /* INPUT PENERIMAAN  */
+
+  

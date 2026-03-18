@@ -1,0 +1,117 @@
+ 
+        /* Gaya umum */
+        .container-dashboard {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        /* Header */
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            border-left: 6px solid #0d6efd;
+            padding-left: 16px;
+        }
+
+        /* Target summary card */
+        .target-summary-card {
+            min-width: 240px;
+            transition: all 0.2s;
+        }
+        .target-summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        /* Navigasi tab */
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border-radius: 0;
+            background: transparent;
+            border-bottom: 3px solid transparent;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0d6efd !important;
+            border-bottom: 3px solid #0d6efd !important;
+            background: transparent;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link:hover {
+            border-bottom-color: #adb5bd;
+        }
+
+        /* Card resep */
+        .recipe-card {
+            transition: all 0.25s ease;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        .recipe-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.1) !important;
+        }
+
+        /* Daftar bahan dengan scroll halus */
+        .bg-light {
+            background-color: #f8fafc !important;
+        }
+        .bg-light::-webkit-scrollbar {
+            width: 4px;
+        }
+        .bg-light::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        /* Badge transparan */
+        .badge.bg-success.bg-opacity-10 {
+            background-color: rgba(25,135,84,0.1) !important;
+        }
+        .badge.bg-danger.bg-opacity-10 {
+            background-color: rgba(220,53,69,0.1) !important;
+        }
+        .badge.bg-primary.bg-opacity-10 {
+            background-color: rgba(13,110,253,0.1) !important;
+        }
+
+        /* Tombol */
+        .btn-outline-secondary {
+            border-color: #dee2e6;
+            color: #495057;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #f1f3f5;
+            border-color: #ced4da;
+            color: #212529;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+        .btn-success {
+            background: linear-gradient(145deg, #28a745, #218838);
+            border: none;
+        }
+        .btn-success:hover {
+            background: linear-gradient(145deg, #218838, #1e7e34);
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            .container-dashboard {
+                padding: 15px;
+                margin: 15px;
+            }
+            h2 {
+                font-size: 24px;
+            }
+            .target-summary-card {
+                width: 100%;
+            }
+        }
