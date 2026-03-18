@@ -1,0 +1,7 @@
+[buildPacks]
+# Disable default PHP buildpack composer install
+enablePhpComposerInstall = false
+
+[phases]
+setup = "echo 'Setting up...'"
+build = "composer install --optimize-autoloader --no-dev && npm ci && npm run build && php artisan storage:link"

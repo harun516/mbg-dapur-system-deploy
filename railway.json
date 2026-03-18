@@ -1,7 +1,6 @@
 {
     "build": {
-        "builder": "nixpacks",
-        "buildCommand": "composer install --optimize-autoloader --no-dev && npm ci && npm run build && php artisan storage:link"
+        "builder": "nixpacks"
     },
     "deploy": {
         "startCommand": "php -S 0.0.0.0:8080 -t public/"
