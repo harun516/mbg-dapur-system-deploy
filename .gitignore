@@ -28,5 +28,3 @@ storage/framework/cache/*
 storage/framework/views/*
 storage/framework/sessions/*
 bootstrap/cache/*
-
-vite.config.js

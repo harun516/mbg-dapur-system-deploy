@@ -1,0 +1,9 @@
+{
+    "build": {
+        "builder": "nixpacks",
+        "buildCommand": "composer install --optimize-autoloader --no-dev && npm ci && npm run build"
+    },
+    "deploy": {
+        "startCommand": "vendor/bin/heroku-php-nginx -C nginx.conf public/"
+    }
+}
