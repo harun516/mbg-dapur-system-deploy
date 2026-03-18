@@ -6,7 +6,7 @@ if [ -n "$DATABASE_URL" ]; then
     # Extract database credentials dari DATABASE_URL
     # Format: postgresql://user:password@host:port/dbname
     DB_REGEX='postgres(?:ql)?://([^:]+):([^@]+)@([^:/]+):([0-9]+)/(.+)'
-    
+
     if [[ $DATABASE_URL =~ postgresql://([^:]+):([^@]+)@([^:/]+):([0-9]+)/(.+) ]]; then
         export DB_USERNAME="${BASH_REMATCH[1]}"
         export DB_PASSWORD="${BASH_REMATCH[2]}"
