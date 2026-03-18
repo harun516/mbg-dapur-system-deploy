@@ -20,9 +20,17 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "GitHub Actions"
 
+      - name: Debug - Check token exists
+        run: |
+          if [ -z "${{ secrets.DEPLOY_TOKEN }}" ]; then
+            echo "❌ ERROR: DEPLOY_TOKEN not found in secrets!"
+            exit 1
+          fi
+          echo "✅ Token exists"
+
       - name: Push to deploy repository
         run: |
-          git remote add deploy "https://${{ secrets.DEPLOY_TOKEN }}@github.com/harun516/mbg-dapur-system-deploy.git"
+          git remote add deploy "https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/harun516/mbg-dapur-system-deploy.git"
           git push deploy main --force
         env:
           GIT_AUTHOR_NAME: "GitHub Actions"
@@ -33,3 +41,4 @@ jobs:
       - name: Verify sync completed
         run: |
           echo "✅ Successfully synced main branch to https://github.com/harun516/mbg-dapur-system-deploy"
+
