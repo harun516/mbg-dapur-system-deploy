@@ -18,6 +18,9 @@ echo "  Port: $DB_PORT"
 echo "  Database: $DB_DATABASE"
 echo "  User: $DB_USERNAME"
 
+# Pastikan Vite production mode (jangan pakai dev server URL)
+rm -f public/hot
+
 # Run migrations
 echo "Running migrations..."
 php artisan migrate --force 2>/dev/null || true

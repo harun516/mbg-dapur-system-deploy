@@ -1,7 +1,7 @@
 {
     "build": {
         "builder": "nixpacks",
-        "buildCommand": "composer install --optimize-autoloader --no-dev && npm ci && npm run build && php artisan storage:link && mkdir -p /tmp/nginx && cp nginx.conf /tmp/nginx/"
+        "buildCommand": "rm -f public/hot && composer install --optimize-autoloader --no-dev && npm ci && npm run build && php artisan storage:link"
     },
     "deploy": {
         "startCommand": "bash start.sh"
