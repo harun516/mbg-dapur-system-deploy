@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Sistem Gudang Dapur') }} - @yield('title')</title>
 
-    <!-- Vite (wajib biar app.css ke-load) -->
-    @vite(['resources/css/app.css', 'resources/css/auth.css', 'resources/js/app.js'])
-
     <!-- Bootstrap 5 + Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Auth Custom CSS via Vite -->
+    @vite(['resources/css/auth.css'])
 
     <!-- Custom CSS Auth (kita pertahankan + tambah override untuk Wagon) -->
     <style>
