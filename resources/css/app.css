@@ -3,13 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import './sidebar.css';
-@import './auth.css';
-@import 'gudang/penerimaan-barang.css';
-@import 'dapur/index-stok-dapur.css';
-@import 'dapur/menu/menu.css';
-@import 'gudang/item/item.css';
-@import 'gudang/request/request.css';
 
 
 
