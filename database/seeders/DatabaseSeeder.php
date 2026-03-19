@@ -21,5 +21,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Run delivery seeder for demo data
+        $this->call(DeliverySeeder::class);
     }
 }
