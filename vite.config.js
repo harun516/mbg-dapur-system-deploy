@@ -8,10 +8,15 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
-                'resources/css/auth.css', // TAMBAHKAN INI
+                'resources/css/auth.css',
+                'resources/css/sidebar.css',
+                'resources/css/gudang/penerimaan-barang.css',
+                'resources/css/dapur/index-stok-dapur.css',
+                'resources/css/dapur/menu/menu.css',
+                'resources/css/gudang/item/item.css',
+                'resources/css/gudang/request/request.css',
                 'resources/js/app.js',
                 'resources/js/dapur/menu/notif-menu.js',
-                'resources/css/sidebar.css',
                 'resources/js/sidebar-toggle.js',
             ],
             refresh: [

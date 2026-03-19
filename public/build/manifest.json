@@ -4,7 +4,7 @@
     "name": "vendor"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BZYImeDj.css",
+    "file": "assets/app-p8HmWxUL.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -19,6 +19,51 @@
     "name": "auth",
     "names": [
       "auth.css"
+    ]
+  },
+  "resources/css/dapur/index-stok-dapur.css": {
+    "file": "assets/index-stok-dapur-D3zre0ql.css",
+    "src": "resources/css/dapur/index-stok-dapur.css",
+    "isEntry": true,
+    "name": "index-stok-dapur",
+    "names": [
+      "index-stok-dapur.css"
+    ]
+  },
+  "resources/css/dapur/menu/menu.css": {
+    "file": "assets/menu-DhS4F-V3.css",
+    "src": "resources/css/dapur/menu/menu.css",
+    "isEntry": true,
+    "name": "menu",
+    "names": [
+      "menu.css"
+    ]
+  },
+  "resources/css/gudang/item/item.css": {
+    "file": "assets/item-B0SqSOJK.css",
+    "src": "resources/css/gudang/item/item.css",
+    "isEntry": true,
+    "name": "item",
+    "names": [
+      "item.css"
+    ]
+  },
+  "resources/css/gudang/penerimaan-barang.css": {
+    "file": "assets/penerimaan-barang-C5tbMbeK.css",
+    "src": "resources/css/gudang/penerimaan-barang.css",
+    "isEntry": true,
+    "name": "penerimaan-barang",
+    "names": [
+      "penerimaan-barang.css"
+    ]
+  },
+  "resources/css/gudang/request/request.css": {
+    "file": "assets/request-DKoFnu2E.css",
+    "src": "resources/css/gudang/request/request.css",
+    "isEntry": true,
+    "name": "request",
+    "names": [
+      "request.css"
     ]
   },
   "resources/css/sidebar.css": {
