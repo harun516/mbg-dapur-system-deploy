@@ -21,6 +21,11 @@ echo "  User: $DB_USERNAME"
 # Pastikan Vite production mode (jangan pakai dev server URL)
 rm -f public/hot
 
+# Cache config and views
+echo "Caching configuration..."
+php artisan config:cache
+php artisan view:cache
+
 # Run migrations
 echo "Running migrations..."
 php artisan migrate --force 2>/dev/null || true

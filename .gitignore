@@ -17,6 +17,8 @@ mix-manifest.json
 # Vite / build artifacts
 public/hot
 public/build/
+!public/build/manifest.json
+!public/build/.gitkeep
 public/storage
 
 # Runtime logs and cache
