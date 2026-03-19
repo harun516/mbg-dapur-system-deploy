@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Anggaran\Budget;
 use App\Models\Anggaran\BudgetAllocation;
+use App\Models\Item;
+use App\Models\Menu;
+use App\Models\Production;
+use App\Models\KitchenStock;
 
 class DashboardController extends Controller
 {
@@ -26,12 +30,22 @@ class DashboardController extends Controller
         // variabel ini untuk saldo gudang
         $saldoGudang = $budget->saldo_belanja_gudang;
 
+        // 3. Statistik dashboard (4 Card Stats)
+        $totalBarang = Item::count();
+        $totalResep = Menu::count();
+        $totalProduksi = Production::count();
+        $stokKritis = KitchenStock::where('qty_sisa', '<=', 5)->count();
+
         return view('admin.dashboard', compact(
             'budget',
             'sisaBebas',
             'persenTerpakai',
             'totalAlokasi',
-            'saldoGudang'
+            'saldoGudang',
+            'totalBarang',
+            'totalResep',
+            'totalProduksi',
+            'stokKritis'
         ));
     }
 }
