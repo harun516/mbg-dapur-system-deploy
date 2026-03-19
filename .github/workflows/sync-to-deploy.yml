@@ -22,15 +22,15 @@ jobs:
 
       - name: Debug - Check token exists
         run: |
-          if [ -z "${{ secrets.DEPLOY_TOKEN }}" ]; then
-            echo "❌ ERROR: DEPLOY_TOKEN not found in secrets!"
+          if [ -z "${{ secrets.DEPLOY_SYNC_TOKEN_BUDI_TO_LUQMAN }}" ]; then
+            echo "❌ ERROR: DEPLOY_SYNC_TOKEN_BUDI_TO_LUQMAN not found in secrets!"
             exit 1
           fi
           echo "✅ Token exists"
 
       - name: Push to deploy repository
         run: |
-          git remote add deploy "https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/harun516/mbg-dapur-system-deploy.git"
+          git remote add deploy "https://x-access-token:${{ secrets.DEPLOY_SYNC_TOKEN_BUDI_TO_LUQMAN }}@github.com/harun516/mbg-dapur-system-deploy.git"
           git push deploy main --force
         env:
           GIT_AUTHOR_NAME: "GitHub Actions"
