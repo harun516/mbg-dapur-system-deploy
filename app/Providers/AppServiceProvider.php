@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
             } catch (\Exception $e) {
                 \Log::error('Migration error: ' . $e->getMessage());
             }
+        }
 
         // Railway berada di belakang proxy, paksa URL HTTPS agar asset Vite tidak mixed-content.
         if ($this->app->environment('production')) {
