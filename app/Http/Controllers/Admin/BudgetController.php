@@ -76,6 +76,58 @@ class BudgetController extends Controller
     ));
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nominal' => 'required|numeric|min:1',
+            'kategori' => 'required|string|max:100',
+            'sumber_dana' => 'required|string|max:255',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $budget = Budget::lockForUpdate()->latest('id')->first();
+            if (!$budget) {
+                $budget = Budget::create([
+                    'nama_proyek' => 'Program Makan Bergizi Gratis',
+                    'sumber_dana' => $request->sumber_dana,
+                    'modal_awal' => 0,
+                    'saldo_saat_ini' => 0,
+                    'saldo_belanja_gudang' => 0,
+                    'status_enable' => 1,
+                ]);
+            }
+
+            $nominal = (float) $request->nominal;
+
+            // Anggaran masuk menambah modal utama dan saldo tersedia.
+            $budget->increment('modal_awal', $nominal);
+            $budget->increment('saldo_saat_ini', $nominal);
+            $budget->sumber_dana = $request->sumber_dana;
+            $budget->save();
+
+            BudgetTransaction::create([
+                'budget_id' => $budget->id,
+                'tipe' => 'masuk',
+                'kategori' => $request->kategori,
+                'sumber_dana' => $request->sumber_dana,
+                'nominal' => $nominal,
+                'keterangan' => $request->keterangan,
+                'status_enable' => 1,
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Anggaran masuk berhasil disimpan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', 'Gagal menyimpan anggaran: '.$e->getMessage());
+        }
+    }
+
     public function storeAllocation(Request $request)
     {
         $request->validate([
