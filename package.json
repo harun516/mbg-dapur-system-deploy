@@ -7,7 +7,8 @@
         "dev": "vite",
         "pull:upstream": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1",
         "pull:upstream:merge": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy merge",
-        "pull:upstream:rebase": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy rebase"
+        "pull:upstream:rebase": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy rebase",
+        "sync:upstream:push": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy merge -PushAfterSync"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",

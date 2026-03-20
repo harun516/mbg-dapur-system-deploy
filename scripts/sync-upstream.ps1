@@ -3,6 +3,9 @@ param(
     [string]$Branch = "main",
     [ValidateSet("ff-only", "merge", "rebase")]
     [string]$Strategy = "ff-only",
+    [string]$PushRemote = "origin",
+    [string]$PushBranch = "main",
+    [switch]$PushAfterSync,
     [switch]$AllowDirty
 )
 
@@ -48,38 +51,55 @@ if ($LASTEXITCODE -ne 0) {
 $parts = ($counts -split "\s+") | Where-Object { $_ -ne "" }
 $ahead = [int]$parts[0]
 $behind = [int]$parts[1]
+$didSync = $false
 
 if ($behind -eq 0) {
     Write-Host "Already up to date with $Remote/$Branch." -ForegroundColor Green
-    exit 0
 }
 
-if ($ahead -gt 0) {
-    Write-Host "Local branch is ahead by $ahead commit(s)." -ForegroundColor Yellow
+if ($behind -gt 0) {
+    if ($ahead -gt 0) {
+        Write-Host "Local branch is ahead by $ahead commit(s)." -ForegroundColor Yellow
+    }
+
+    switch ($Strategy) {
+        "ff-only" {
+            Write-Host "Pulling from $Remote/$Branch with --ff-only ..." -ForegroundColor Cyan
+            git pull --ff-only $Remote $Branch
+            if ($LASTEXITCODE -ne 0) {
+                Fail "Pull failed in ff-only mode. Use Strategy=merge or Strategy=rebase for diverged branches."
+            }
+        }
+        "merge" {
+            Write-Host "Merging $Remote/$Branch into current branch (no editor) ..." -ForegroundColor Cyan
+            git merge --no-edit "$Remote/$Branch"
+            if ($LASTEXITCODE -ne 0) {
+                Fail "Merge failed. Resolve conflicts, then run git add <files> and git commit."
+            }
+        }
+        "rebase" {
+            Write-Host "Rebasing current branch onto $Remote/$Branch ..." -ForegroundColor Cyan
+            git rebase "$Remote/$Branch"
+            if ($LASTEXITCODE -ne 0) {
+                Fail "Rebase failed. Resolve conflicts, then run git rebase --continue or git rebase --abort."
+            }
+        }
+    }
+
+    $didSync = $true
 }
 
-switch ($Strategy) {
-    "ff-only" {
-        Write-Host "Pulling from $Remote/$Branch with --ff-only ..." -ForegroundColor Cyan
-        git pull --ff-only $Remote $Branch
-        if ($LASTEXITCODE -ne 0) {
-            Fail "Pull failed in ff-only mode. Use Strategy=merge or Strategy=rebase for diverged branches."
-        }
+if ($PushAfterSync) {
+    Write-Host "Pushing HEAD to $PushRemote/$PushBranch ..." -ForegroundColor Cyan
+    git push $PushRemote "HEAD:$PushBranch"
+    if ($LASTEXITCODE -ne 0) {
+        Fail "Push failed. Check remote permissions or branch protections."
     }
-    "merge" {
-        Write-Host "Merging $Remote/$Branch into current branch (no editor) ..." -ForegroundColor Cyan
-        git merge --no-edit "$Remote/$Branch"
-        if ($LASTEXITCODE -ne 0) {
-            Fail "Merge failed. Resolve conflicts, then run git add <files> and git commit."
-        }
-    }
-    "rebase" {
-        Write-Host "Rebasing current branch onto $Remote/$Branch ..." -ForegroundColor Cyan
-        git rebase "$Remote/$Branch"
-        if ($LASTEXITCODE -ne 0) {
-            Fail "Rebase failed. Resolve conflicts, then run git rebase --continue or git rebase --abort."
-        }
-    }
+    Write-Host "Push completed successfully." -ForegroundColor Green
 }
 
-Write-Host "Sync completed successfully." -ForegroundColor Green
+if ($didSync) {
+    Write-Host "Sync completed successfully." -ForegroundColor Green
+} else {
+    Write-Host "Nothing to sync." -ForegroundColor Green
+}
