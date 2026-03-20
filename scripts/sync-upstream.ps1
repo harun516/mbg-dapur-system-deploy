@@ -1,6 +1,8 @@
 param(
     [string]$Remote = "upstream",
     [string]$Branch = "main",
+    [ValidateSet("ff-only", "merge", "rebase")]
+    [string]$Strategy = "ff-only",
     [switch]$AllowDirty
 )
 
@@ -53,13 +55,31 @@ if ($behind -eq 0) {
 }
 
 if ($ahead -gt 0) {
-    Write-Host "Local branch is ahead by $ahead commit(s). Pull will still use fast-forward only." -ForegroundColor Yellow
+    Write-Host "Local branch is ahead by $ahead commit(s)." -ForegroundColor Yellow
 }
 
-Write-Host "Pulling from $Remote/$Branch with --ff-only ..." -ForegroundColor Cyan
-git pull --ff-only $Remote $Branch
-if ($LASTEXITCODE -ne 0) {
-    Fail "Pull failed. Resolve branch divergence manually if needed."
+switch ($Strategy) {
+    "ff-only" {
+        Write-Host "Pulling from $Remote/$Branch with --ff-only ..." -ForegroundColor Cyan
+        git pull --ff-only $Remote $Branch
+        if ($LASTEXITCODE -ne 0) {
+            Fail "Pull failed in ff-only mode. Use Strategy=merge or Strategy=rebase for diverged branches."
+        }
+    }
+    "merge" {
+        Write-Host "Merging $Remote/$Branch into current branch ..." -ForegroundColor Cyan
+        git merge "$Remote/$Branch"
+        if ($LASTEXITCODE -ne 0) {
+            Fail "Merge failed. Resolve conflicts, then run git add <files> and git commit."
+        }
+    }
+    "rebase" {
+        Write-Host "Rebasing current branch onto $Remote/$Branch ..." -ForegroundColor Cyan
+        git rebase "$Remote/$Branch"
+        if ($LASTEXITCODE -ne 0) {
+            Fail "Rebase failed. Resolve conflicts, then run git rebase --continue or git rebase --abort."
+        }
+    }
 }
 
 Write-Host "Sync completed successfully." -ForegroundColor Green
