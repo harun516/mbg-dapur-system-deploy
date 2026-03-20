@@ -6,7 +6,7 @@
         "build": "vite build",
         "dev": "vite",
         "pull:upstream": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1",
-        "pull:upstream:merge": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy merge",
+        "pull:upstream:merge": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy merge -PushAfterSync",
         "pull:upstream:rebase": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy rebase",
         "sync:upstream:push": "powershell -ExecutionPolicy Bypass -File scripts/sync-upstream.ps1 -Strategy merge -PushAfterSync"
     },
