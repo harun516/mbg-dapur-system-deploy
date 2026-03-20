@@ -9,84 +9,71 @@ use App\Models\Anggaran\BudgetRequest;
 use App\Models\Anggaran\BudgetTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Exports\AnggaranExport;
+use App\Exports\BudgetTransactionExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BudgetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $budget = Budget::latest('id')->first();
-        if (!$budget) {
-            $budget = Budget::create([
-                'nama_proyek' => 'Program Makan Bergizi Gratis',
-                'modal_awal' => 0,
-                'saldo_saat_ini' => 0,
-                'saldo_belanja_gudang' => 0,
-                'status_enable' => 1,
-            ]);
-        }
-
-        $transactions = BudgetTransaction::where('status_enable', 1)
-            ->orderBy('created_at', 'desc')
-            ->get()
-        ;
-
-        $allocations = BudgetAllocation::where('status_enable', 1)->get();
-        $totalAlokasi = $allocations->sum('nominal');
-        $modalAwal = $budget->saldo_saat_ini ?? 0;
-        $persenTerpakai = ($modalAwal > 0) ? ($totalAlokasi / $modalAwal) * 100 : 0;
-        $sisaBebas = $budget->saldo_saat_ini ?? 0;
-        $saldoGudang = $budget->saldo_belanja_gudang ?? 0;
-
-        return view('admin.budget.index', compact(
-            'budget',
-            'transactions',
-            'allocations',
-            'sisaBebas',
-            'persenTerpakai',
-            'saldoGudang',
-            'totalAlokasi',
-        ));
+    $budget = Budget::latest('id')->first();
+    if (!$budget) {
+        $budget = Budget::create([
+            'nama_proyek' => 'Program Makan Bergizi Gratis',
+            'modal_awal' => 0,
+            'saldo_saat_ini' => 0,
+            'saldo_belanja_gudang' => 0,
+            'status_enable' => 1,
+        ]);
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nominal' => 'required|numeric|min:1',
-            'kategori' => 'required|string',
-            'sumber_dana' => 'required|string',
-            'keterangan' => 'nullable|string',
-        ]);
+    // 1. LOGIKA FILTER TRANSAKSI
+    $query = BudgetTransaction::where('status_enable', 1);
 
-        DB::transaction(function () use ($request) {
-            $budget = Budget::lockForUpdate()->latest('id')->first();
-            if (!$budget) {
-                $budget = Budget::create([
-                    'nama_proyek' => 'Program Makan Bergizi Gratis',
-                    'modal_awal' => 0,
-                    'saldo_saat_ini' => 0,
-                    'saldo_belanja_gudang' => 0,
-                    'status_enable' => 1,
-                ]);
-            }
+    if ($request->filled('start_date')) {
+        $query->whereDate('created_at', '>=', $request->start_date);
+    }
+    if ($request->filled('end_date')) {
+        $query->whereDate('created_at', '<=', $request->end_date);
+    }
+    if ($request->filled('category')) {
+        $cat = $request->category;
+        if ($cat == 'kirim_gudang') {
+            $query->where(function($q) {
+                $q->where('kategori', 'like', '%alokasi%')
+                  ->orWhere('kategori', 'Kirim Saldo ke gudang');
+            });
+        } elseif ($cat == 'penerimaan_barang') {
+            $query->whereIn('kategori', ['Belanja Bahan Baku', 'penerimaan gudang']);
+        } elseif ($cat == 'anggaran_masuk') {
+            $query->where(function($q) {
+                $q->where('kategori', 'Modal Utama')->orWhere('tipe', 'masuk');
+            });
+        }
+    }
 
-            BudgetTransaction::create([
-                'budget_id' => $budget->id,
-                'tipe' => 'masuk',
-                'kategori' => 'Modal Utama', // Disesuaikan untuk label Hijau "Anggaran Masuk"
-                'sumber_dana' => $request->sumber_dana,
-                'nominal' => $request->nominal,
-                'keterangan' => $request->keterangan,
-                'status_enable' => 1,
-            ]);
+    // Ambil data transaksi dengan pagination
+    $transactions = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
 
-            $budget->increment('saldo_saat_ini', $request->nominal);
+    // 2. DEFINISIKAN ULANG VARIABEL UNTUK DASHBOARD (PENTING!)
+    // Pastikan bagian ini tidak terhapus atau berada di atas return view
+    $allocations = BudgetAllocation::where('status_enable', 1)->get();
+    $totalAlokasi = $allocations->sum('nominal');
+    $modalAwal = $budget->saldo_saat_ini ?? 0;
+    $persenTerpakai = ($modalAwal > 0) ? ($totalAlokasi / $modalAwal) * 100 : 0;
+    $sisaBebas = $budget->saldo_saat_ini ?? 0;
+    $saldoGudang = $budget->saldo_belanja_gudang ?? 0;
 
-            if (0 == $budget->modal_awal) {
-                $budget->update(['modal_awal' => $request->nominal]);
-            }
-        });
-
-        return back()->with('success', 'Anggaran berhasil ditambahkan!');
+    return view('admin.budget.index', compact(
+        'budget',
+        'transactions',
+        'allocations', // Variabel yang tadi error
+        'sisaBebas',
+        'persenTerpakai',
+        'saldoGudang',
+        'totalAlokasi'
+    ));
     }
 
     public function storeAllocation(Request $request)
@@ -239,5 +226,35 @@ class BudgetController extends Controller
 
             return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
+    }
+   public function export(Request $request)
+    {
+    $query = BudgetTransaction::where('status_enable', 1);
+
+    // Pastikan LOGIKA FILTER DI SINI SAMA dengan di function index
+    if ($request->filled('start_date')) {
+        $query->whereDate('created_at', '>=', $request->start_date);
+    }
+    if ($request->filled('end_date')) {
+        $query->whereDate('created_at', '<=', $request->end_date);
+    }
+    if ($request->filled('category')) {
+        $cat = $request->category;
+        if ($cat == 'kirim_gudang') {
+            $query->where(function($q) {
+                $q->where('kategori', 'like', '%alokasi%')->orWhere('kategori', 'Kirim Saldo ke gudang');
+            });
+        } elseif ($cat == 'penerimaan_barang') {
+            $query->whereIn('kategori', ['Belanja Bahan Baku', 'penerimaan gudang']);
+        } elseif ($cat == 'anggaran_masuk') {
+            $query->where(function($q) {
+                $q->where('kategori', 'Modal Utama')->orWhere('tipe', 'masuk');
+            });
+        }
+    }
+
+    $transactions = $query->latest()->get();
+
+    return Excel::download(new BudgetTransactionExport($transactions), 'Riwayat_Transaksi_Anggaran.xlsx');
     }
 }
