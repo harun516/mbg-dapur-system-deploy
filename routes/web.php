@@ -18,6 +18,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RequestController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Kurir\RiwayatController;
+use App\Http\Controllers\Admin\LaporanController;
 
 // ==================== ROOT & AUTH ==================== //
 Route::get('/', function () {
@@ -56,6 +58,14 @@ Route::middleware(['auth'])->group(function () {
         // Budget Management
         Route::get('/budget', [BudgetController::class, 'index'])->name('budget.index');
         Route::post('/budget', [BudgetController::class, 'store'])->name('budget.store');
+        Route::get('/budget/export', [BudgetController::class, 'export'])->name('budget.export');
+
+        // Laporan
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/anggaran/export', [LaporanController::class, 'exportAnggaran'])->name('laporan.anggaran.export');
+                // laporan gudang
+                Route::get('/gudang/penerimaan', [PenerimaanController::class, 'index'])->name('gudang.penerimaan.index');
+                Route::get('/gudang/penerimaan/export', [PenerimaanController::class, 'exportExcel'])->name('gudang.penerimaan.export');
 
         // Allocation
         Route::post('/budget/allocation', [BudgetController::class, 'storeAllocation'])->name('budget.allocation');
@@ -117,6 +127,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/penerimaan', [PenerimaanController::class, 'index'])->name('penerimaan.index');
         Route::get('/penerimaan/input', [PenerimaanController::class, 'create'])->name('penerimaan.input');
         Route::post('/penerimaan/store', [PenerimaanController::class, 'store'])->name('penerimaan.store');
+        Route::get('/penerimaan/export', [PenerimaanController::class, 'exportExcel'])->name('penerimaan.export');
 
         // Approval Request dari Dapur
         Route::prefix('/request')->group(function () {
@@ -158,6 +169,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [CourierDashboardController::class, 'index'])->name('dashboard');
         // print
         Route::get('/delivery/{id}/print', [CourierDashboardController::class, 'printSurat'])->name('delivery.print');
+        Route::get('/riwayat/print/{id}', [CourierDashboardController::class, 'printSurat'])->name('print-surat');
 
         // Redirect jika akses root kurir (opsional)
         Route::get('/', function () { return redirect()->route('kurir.dashboard'); });
@@ -165,6 +177,7 @@ Route::middleware(['auth'])->group(function () {
         // Aksi Logistik
         Route::post('/delivery/{id}/take', [CourierDashboardController::class, 'takeJob'])->name('delivery.take');
         Route::post('/delivery/{id}/complete', [CourierDashboardController::class, 'completeJob'])->name('delivery.complete');
+        Route::get('/riwayat', [App\Http\Controllers\Kurir\RiwayatController::class, 'index'])->name('riwayat.index');
     });
 });
 

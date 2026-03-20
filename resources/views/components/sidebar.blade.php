@@ -102,6 +102,12 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('kurir.riwayat.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('kurir.riwayat.index') }}">
+                        <i class="fas fa fa-route me-3 fs-5"></i> Riwayat Pengiriman
+                    </a>
+                </li>
+
             @endif
 
         <!====================================== ROLE ADMIN =====================================>
@@ -120,8 +126,8 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded hover-bg-light" href="#">
+                 <li class="nav-item">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded {{ request()->routeIs('admin.laporan.*') ? 'active bg-primary-subtle text-primary' : 'hover-bg-light' }}" href="{{ route('admin.laporan.index') }}">
                         <i class="fas fa-bar-chart me-3 fs-5"></i> Laporan
                     </a>
                 </li>

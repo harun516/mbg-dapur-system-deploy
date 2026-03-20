@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Anggaran\Budget;
 use App\Models\Anggaran\BudgetTransaction;
 use App\Models\Item;
-use App\Models\Penerimaan; // Import model Budget
+use App\Models\Penerimaan;
+use App\Models\PenerimaanDetail;
 use App\Models\Stock; // Import model Transaction
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Exports\PenerimaanExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PenerimaanController extends Controller
 {
@@ -111,30 +114,59 @@ class PenerimaanController extends Controller
 
     public function index(Request $request)
     {
-        // Menggunakan eager loading agar query efisien (mencegah N+1)
+        // 1. Inisialisasi Query dengan Eager Loading
         $query = Penerimaan::with(['details.item', 'user'])->latest();
 
-        // Filter Tanggal
+        // 2. Terapkan Filter (Tanggal & Barang)
         if ($request->filled('start_date')) {
             $query->whereDate('tanggal', '>=', $request->start_date);
         }
         if ($request->filled('end_date')) {
             $query->whereDate('tanggal', '<=', $request->end_date);
         }
-
-        // Filter Nama Barang (melalui detail)
         if ($request->filled('item_id')) {
             $query->whereHas('details', function ($q) use ($request) {
                 $q->where('item_id', $request->item_id);
             });
         }
 
-        // Menggunakan paginate agar loading halaman tidak berat jika data sudah ribuan
+        // 3. HITUNG GRAND TOTAL (Penting: Hitung sebelum dipaginasi)
+        // Kita cloning query agar filter tetap sama, lalu ambil total harganya
+        $grandTotalQuery = clone $query;
+        $filteredIds = $grandTotalQuery->pluck('id');
+        
+        $grandTotal = PenerimaanDetail::whereIn('penerimaan_id', $filteredIds)
+            ->sum(DB::raw('qty * harga_satuan'));
+
+        // 4. Eksekusi Paginasi
         $penerimaans = $query->paginate(10)->withQueryString();
 
-        // Menggunakan scopeAktif yang kita buat tadi agar dropdown rapi
+        // 5. Data untuk Dropdown Filter
         $items = Item::aktif()->orderBy('nama_barang')->get();
 
-        return view('gudang.penerimaan.index', compact('penerimaans', 'items'));
+        return view('gudang.penerimaan.index', compact('penerimaans', 'items', 'grandTotal'));
+    }
+
+    public function exportExcel(Request $request) 
+    {
+    $query = Penerimaan::with(['details.item', 'user']);
+
+    // Terapkan filter yang sama
+    if ($request->filled('start_date')) {
+        $query->whereDate('tanggal', '>=', $request->start_date);
+    }
+    // ... (teruskan filter end_date dan item_id seperti sebelumnya)
+
+    $data = $query->get();
+    
+    // Hitung Grand Total untuk dikirim ke Excel
+    $grandTotal = \App\Models\PenerimaanDetail::whereIn('penerimaan_id', $data->pluck('id'))
+                  ->sum(DB::raw('qty * harga_satuan'));
+
+    return \Maatwebsite\Excel\Facades\Excel::download(
+        new \App\Exports\PenerimaanExport($data, $grandTotal), 
+        'Laporan_Penerimaan_Barang.xlsx'
+    );
     }
 }
+

@@ -252,94 +252,143 @@
         </div>
     </div>
 
-    <!-- Riwayat Transaksi -->
-    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="card-header bg-white py-4 border-0">
-            <h6 class="m-0 fw-bold text-dark"><i class="fas fa-history me-2" style="color: #4e73df;"></i>Riwayat Transaksi Anggaran</h6>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead style="background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
-                        <tr>
-                            <th class="ps-4 fw-bold text-dark" style="font-size: 0.875rem;">Tanggal</th>
-                            <th class="fw-bold text-dark" style="font-size: 0.875rem;">Kategori</th>
-                            <th class="fw-bold text-dark" style="font-size: 0.875rem;">Sumber Dana</th>
-                            <th class="fw-bold text-dark" style="font-size: 0.875rem;">Nominal</th>
-                            <th class="fw-bold text-dark" style="font-size: 0.875rem;">Keterangan</th>
-                            <th class="text-center fw-bold text-dark" style="font-size: 0.875rem;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transactions as $trx)
-                        <tr style="border-bottom: 1px solid #e9ecef; transition: all 0.2s;">
-                            <td class="ps-4 py-3">
-                                <span class="d-block fw-bold text-dark small">{{ $trx->created_at->format('d M Y') }}</span>
-                                <small class="text-muted">{{ $trx->created_at->format('H:i') }} WIB</small>
-                            </td>
-
-                            {{-- KOLOM KATEGORI --}}
-                            <td class="py-3">
-                                @if(str_contains(strtolower($trx->kategori), 'alokasi') || $trx->kategori == 'Kirim Saldo ke gudang')
-                                <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(15, 118, 110, 0.15); color: #0f766e;">Kirim ke Gudang</span>
-                                @elseif($trx->kategori == 'Belanja Bahan Baku' || $trx->kategori == 'penerimaan gudang')
-                                <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(180, 83, 9, 0.15); color: #b45309;">Penerimaan Barang</span>
-                                @elseif($trx->kategori == 'Modal Utama' || $trx->tipe == 'masuk')
-                                <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">Anggaran Masuk</span>
-                                @else
-                                <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(107, 114, 128, 0.15); color: #6b7280;">{{ $trx->kategori }}</span>
-                                @endif
-                            </td>
-
-                            {{-- KOLOM SUMBER DANA --}}
-                            <td class="py-3">
-                                <small class="text-muted"><i class="fas fa-building me-1" style="color: #4e73df;"></i> {{ $trx->sumber_dana }}</small>
-                            </td>
-
-                            {{-- KOLOM NOMINAL --}}
-                            <td class="py-3">
-                                <span class="fw-bold" style="font-size: 0.95rem;">
-                                    @if($trx->tipe == 'keluar' || $trx->kategori == 'Belanja Bahan Baku' || str_contains(strtolower($trx->kategori), 'alokasi'))
-                                    <span style="color: #dc2626;">- Rp {{ number_format(abs($trx->nominal), 0, ',', '.') }}</span>
-                                    @else
-                                    <span style="color: #10b981;">+ Rp {{ number_format(abs($trx->nominal), 0, ',', '.') }}</span>
-                                    @endif
-                                </span>
-                            </td>
-
-                            {{-- KOLOM KETERANGAN --}}
-                            <td class="py-3">
-                                <small class="text-muted">
-                                    @if($trx->kategori == 'Belanja Bahan Baku')
-                                    Belanja stok dari supplier
-                                    @else
-                                    {{ Str::limit($trx->keterangan ?? '-', 25) }}
-                                    @endif
-                                </small>
-                            </td>
-
-                            {{-- KOLOM STATUS --}}
-                            <td class="text-center py-3">
-                                @if($trx->status_enable)
-                                <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">✓ Aktif</span>
-                                @else
-                                <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(107, 114, 128, 0.15); color: #6b7280;">Hidden</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
-                                <i class="fas fa-scroll fa-2x mb-2 d-block text-secondary" style="opacity: 0.5;"></i>
-                                Belum ada transaksi anggaran.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+<!-- Riwayat Transaksi -->
+         <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <form method="GET" action="{{ route('admin.budget.index') }}"> {{-- Sesuaikan dengan nama route index kamu --}}
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-dark">Dari Tanggal</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-calendar-alt text-muted"></i></span>
+                                <input type="date" name="start_date" class="form-control form-control-sm border-start-0" value="{{ request('start_date') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-dark">Sampai Tanggal</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-calendar-check text-muted"></i></span>
+                                <input type="date" name="end_date" class="form-control form-control-sm border-start-0" value="{{ request('end_date') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-dark">Kategori</label>
+                            <select name="category" class="form-select form-select-sm">
+                                <option value="">Semua Kategori</option>
+                                <option value="anggaran_masuk" {{ request('category') == 'anggaran_masuk' ? 'selected' : '' }}>Anggaran Masuk</option>
+                                <option value="kirim_gudang" {{ request('category') == 'kirim_gudang' ? 'selected' : '' }}>Kirim ke Gudang</option>
+                                <option value="penerimaan_barang" {{ request('category') == 'penerimaan_barang' ? 'selected' : '' }}>Penerimaan Barang</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm flex-fill fw-bold">
+                                <i class="fas fa-filter me-1"></i> Filter
+                            </button>
+                            <a href="{{ route('admin.budget.index') }}" class="btn btn-outline-secondary btn-sm flex-fill fw-bold">
+                                <i class="fas fa-undo me-1"></i> Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
+
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-4 border-0 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-dark">
+                    <i class="fas fa-history me-2" style="color: #4e73df;"></i>Riwayat Transaksi Anggaran
+                </h6>
+                <a href="{{ route('admin.budget.export', request()->all()) }}" class="btn btn-success btn-sm rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="fas fa-file-excel me-2"></i>Export Excel
+                </a>
+            </div>
+            
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead style="background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+                            <tr>
+                                <th class="ps-4 fw-bold text-dark" style="font-size: 0.875rem;">Tanggal</th>
+                                <th class="fw-bold text-dark" style="font-size: 0.875rem;">Kategori</th>
+                                <th class="fw-bold text-dark" style="font-size: 0.875rem;">Sumber Dana</th>
+                                <th class="fw-bold text-dark" style="font-size: 0.875rem;">Nominal</th>
+                                <th class="fw-bold text-dark" style="font-size: 0.875rem;">Keterangan</th>
+                                <th class="text-center fw-bold text-dark" style="font-size: 0.875rem;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($transactions as $trx)
+                            <tr style="border-bottom: 1px solid #e9ecef; transition: all 0.2s;">
+                                <td class="ps-4 py-3">
+                                    <span class="d-block fw-bold text-dark small">{{ $trx->created_at->format('d M Y') }}</span>
+                                    <small class="text-muted">{{ $trx->created_at->format('H:i') }} WIB</small>
+                                </td>
+
+                                <td class="py-3">
+                                    @if(str_contains(strtolower($trx->kategori), 'alokasi') || $trx->kategori == 'Kirim Saldo ke gudang')
+                                        <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(15, 118, 110, 0.15); color: #0f766e;">Kirim ke Gudang</span>
+                                    @elseif($trx->kategori == 'Belanja Bahan Baku' || $trx->kategori == 'penerimaan gudang')
+                                        <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(180, 83, 9, 0.15); color: #b45309;">Penerimaan Barang</span>
+                                    @elseif($trx->kategori == 'Modal Utama' || $trx->tipe == 'masuk')
+                                        <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">Anggaran Masuk</span>
+                                    @else
+                                        <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(107, 114, 128, 0.15); color: #6b7280;">{{ $trx->kategori }}</span>
+                                    @endif
+                                </td>
+
+                                <td class="py-3">
+                                    <small class="text-muted"><i class="fas fa-building me-1" style="color: #4e73df;"></i> {{ $trx->sumber_dana }}</small>
+                                </td>
+
+                                <td class="py-3">
+                                    <span class="fw-bold" style="font-size: 0.95rem;">
+                                        @if($trx->tipe == 'keluar' || $trx->kategori == 'Belanja Bahan Baku' || str_contains(strtolower($trx->kategori), 'alokasi'))
+                                            <span style="color: #dc2626;">- Rp {{ number_format(abs($trx->nominal), 0, ',', '.') }}</span>
+                                        @else
+                                            <span style="color: #10b981;">+ Rp {{ number_format(abs($trx->nominal), 0, ',', '.') }}</span>
+                                        @endif
+                                    </span>
+                                </td>
+
+                                <td class="py-3">
+                                    <small class="text-muted">
+                                        @if($trx->kategori == 'Belanja Bahan Baku')
+                                            Belanja stok dari supplier
+                                        @else
+                                            {{ Str::limit($trx->keterangan ?? '-', 25) }}
+                                        @endif
+                                    </small>
+                                </td>
+
+                                <td class="text-center py-3">
+                                    @if($trx->status_enable)
+                                        <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">✓ Aktif</span>
+                                    @else
+                                        <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: rgba(107, 114, 128, 0.15); color: #6b7280;">Hidden</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-scroll fa-2x mb-2 d-block text-secondary" style="opacity: 0.5;"></i>
+                                    Tidak ada data transaksi ditemukan untuk filter ini.
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            @if($transactions->hasPages())
+            <div class="card-footer bg-white border-0 py-3">
+                <div class="d-flex justify-content-center">
+                    {{ $transactions->links() }}
+                </div>
+            </div>
+            @endif
+        </div>
 </div>
 
 <!-- Modal Input Anggaran Masuk -->

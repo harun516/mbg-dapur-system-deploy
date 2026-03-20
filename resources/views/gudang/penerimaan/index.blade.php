@@ -33,6 +33,9 @@
             </div>
             <div class="col-md-2 col-sm-12 d-flex gap-2">
                 <button type="submit" class="btn btn-primary flex-fill">Filter</button>
+                <a href="{{ route('penerimaan.export', request()->all()) }}" class="btn btn-success px-3">
+                    <i class="fas fa-file-excel"></i>
+                </a>
                 <a href="{{ route('penerimaan.index') }}" class="btn btn-secondary flex-fill text-center">Reset</a>
             </div>
         </div>
@@ -94,6 +97,14 @@
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+        <tr class="table-dark">
+            <td colspan="8" class="text-end fw-bold">GRAND TOTAL (HASIL FILTER):</td>
+            <td colspan="2" class="fw-bold text-warning">
+                Rp {{ number_format($grandTotal, 0, ',', '.') }}
+            </td>
+        </tr>
+    </tfoot>
     </table>
     </div>
 
