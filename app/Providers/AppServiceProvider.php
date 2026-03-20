@@ -20,18 +20,22 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        // Auto-run migration di production
+        // Auto-run migration di production (aman untuk MySQL/PostgreSQL)
         if (app()->environment('production')) {
-            \DB::statement("SET SESSION sql_mode='STRICT_TRANS_TABLES'");
-
-            // Check jika migrations table blum ada, jalankan migrate
             try {
+                $driver = config('database.default');
+
+                // sql_mode hanya valid untuk MySQL/MariaDB.
+                if (in_array($driver, ['mysql', 'mariadb'], true)) {
+                    \DB::statement("SET SESSION sql_mode='STRICT_TRANS_TABLES'");
+                }
+
+                // Check jika migrations table belum ada, jalankan migrate.
                 if (!Schema::hasTable('migrations')) {
-                    // Jalankan migration
                     \Artisan::call('migrate', ['--force' => true]);
                 }
             } catch (\Exception $e) {
-                \Log::error('Migration error: ' . $e->getMessage());
+                \Log::warning('Production bootstrap DB step skipped: '.$e->getMessage());
             }
         }
 
