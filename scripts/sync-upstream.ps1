@@ -67,8 +67,8 @@ switch ($Strategy) {
         }
     }
     "merge" {
-        Write-Host "Merging $Remote/$Branch into current branch ..." -ForegroundColor Cyan
-        git merge "$Remote/$Branch"
+        Write-Host "Merging $Remote/$Branch into current branch (no editor) ..." -ForegroundColor Cyan
+        git merge --no-edit "$Remote/$Branch"
         if ($LASTEXITCODE -ne 0) {
             Fail "Merge failed. Resolve conflicts, then run git add <files> and git commit."
         }
