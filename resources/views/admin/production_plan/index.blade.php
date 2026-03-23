@@ -322,7 +322,7 @@ $delivBadge = [
                             <select name="recipient_id" class="form-select" required>
                                 <option value="">-- Pilih Lembaga --</option>
                                 @foreach($recipients as $recipient)
-                                    <option value="{{ $recipient->id }}">{{ $recipient->nama_lembaga }}</option>
+                                    <option value="{{ $recipient->id }}">{{ $recipient->nama_lembaga }} ({{ $recipient->jumlah_porsi }} Porsi)</option>
                                 @endforeach
                             </select>
                         </div>

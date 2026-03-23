@@ -32,8 +32,8 @@ class ProductionPlanController extends Controller
         // --- Filter Monitoring Kurir (Bawah) ---
         $queryDelivery = Delivery::with(['productionPlan.menu', 'recipient', 'courier'])->where('status_enable', 1);
 
-        if ($request->filled('delivery_date')) {
-            $queryDelivery->whereDate('created_at', $request->delivery_date);
+        if (!$request->filled('delivery_date')) {
+            $queryDelivery->whereDate('created_at', today());
         }
         if ($request->filled('delivery_school')) {
             $queryDelivery->where('recipient_id', $request->delivery_school);

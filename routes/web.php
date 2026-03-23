@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BudgetController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\ProductionPlanController;
 use App\Http\Controllers\Admin\RecipientController;
 use App\Http\Controllers\Admin\SalaryController;
@@ -11,6 +12,7 @@ use App\http\Controllers\Gudang\GudangSaldoController;
 use App\Http\Controllers\ItemBatchController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\Kurir\CourierDashboardController;
+use App\Http\Controllers\Kurir\RiwayatController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PenerimaanController;
 use App\Http\Controllers\ProductionController;
@@ -18,8 +20,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RequestController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Kurir\RiwayatController;
-use App\Http\Controllers\Admin\LaporanController;
 
 // ==================== ROOT & AUTH ==================== //
 Route::get('/', function () {
@@ -63,9 +63,9 @@ Route::middleware(['auth'])->group(function () {
         // Laporan
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/anggaran/export', [LaporanController::class, 'exportAnggaran'])->name('laporan.anggaran.export');
-                // laporan gudang
-                Route::get('/gudang/penerimaan', [PenerimaanController::class, 'index'])->name('gudang.penerimaan.index');
-                Route::get('/gudang/penerimaan/export', [PenerimaanController::class, 'exportExcel'])->name('gudang.penerimaan.export');
+        // laporan gudang
+        Route::get('/gudang/penerimaan', [PenerimaanController::class, 'index'])->name('gudang.penerimaan.index');
+        Route::get('/gudang/penerimaan/export', [PenerimaanController::class, 'exportExcel'])->name('gudang.penerimaan.export');
 
         // Allocation
         Route::post('/budget/allocation', [BudgetController::class, 'storeAllocation'])->name('budget.allocation');
@@ -177,7 +177,7 @@ Route::middleware(['auth'])->group(function () {
         // Aksi Logistik
         Route::post('/delivery/{id}/take', [CourierDashboardController::class, 'takeJob'])->name('delivery.take');
         Route::post('/delivery/{id}/complete', [CourierDashboardController::class, 'completeJob'])->name('delivery.complete');
-        Route::get('/riwayat', [App\Http\Controllers\Kurir\RiwayatController::class, 'index'])->name('riwayat.index');
+        Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat.index');
     });
 });
 

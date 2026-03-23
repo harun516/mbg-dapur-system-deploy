@@ -21,7 +21,7 @@ class PenerimaanExport implements FromView, ShouldAutoSize
     {
         return view('gudang.exports.penerimaan_excel', [
             'penerimaans' => $this->penerimaans,
-            'grandTotal' => $this->grandTotal
+            'grandTotal' => $this->grandTotal,
         ]);
     }
 }

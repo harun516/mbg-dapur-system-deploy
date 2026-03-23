@@ -3,9 +3,9 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -33,7 +33,7 @@ class BudgetTransactionExport implements FromCollection, WithHeadings, WithMappi
             'Tipe',
             'Nominal',
             'Keterangan',
-            'Status'
+            'Status',
         ];
     }
 
@@ -41,22 +41,22 @@ class BudgetTransactionExport implements FromCollection, WithHeadings, WithMappi
     {
         // Logika kategori yang sama dengan di Blade
         $kategori = $trx->kategori;
-        if (str_contains(strtolower($trx->kategori), 'alokasi') || $trx->kategori == 'Kirim Saldo ke gudang') {
+        if (str_contains(strtolower($trx->kategori), 'alokasi') || 'Kirim Saldo ke gudang' == $trx->kategori) {
             $kategori = 'Kirim ke Gudang';
-        } elseif ($trx->kategori == 'Belanja Bahan Baku' || $trx->kategori == 'penerimaan gudang') {
+        } elseif ('Belanja Bahan Baku' == $trx->kategori || 'penerimaan gudang' == $trx->kategori) {
             $kategori = 'Penerimaan Barang';
-        } elseif ($trx->kategori == 'Modal Utama' || $trx->tipe == 'masuk') {
+        } elseif ('Modal Utama' == $trx->kategori || 'masuk' == $trx->tipe) {
             $kategori = 'Anggaran Masuk';
         }
 
         return [
             $trx->created_at->format('d M Y'),
-            $trx->created_at->format('H:i') . ' WIB',
+            $trx->created_at->format('H:i').' WIB',
             $kategori,
             $trx->sumber_dana,
             ucfirst($trx->tipe),
-            ($trx->tipe == 'keluar' ? '-' : '+') . ' ' . $trx->nominal,
-            $trx->kategori == 'Belanja Bahan Baku' ? 'Belanja stok dari supplier' : ($trx->keterangan ?? '-'),
+            ('keluar' == $trx->tipe ? '-' : '+').' '.$trx->nominal,
+            'Belanja Bahan Baku' == $trx->kategori ? 'Belanja stok dari supplier' : ($trx->keterangan ?? '-'),
             $trx->status_enable ? 'Aktif' : 'Hidden',
         ];
     }
