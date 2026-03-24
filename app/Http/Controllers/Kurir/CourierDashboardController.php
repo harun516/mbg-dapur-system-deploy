@@ -36,7 +36,7 @@ class CourierDashboardController extends Controller
 
     public function printSurat($id)
     {
-       $delivery = Delivery::with(['productionPlan.menu', 'recipient', 'courier'])->findOrFail($id);
+        $delivery = Delivery::with(['productionPlan.menu', 'recipient', 'courier'])->findOrFail($id);
 
         return view('kurir.riwayat.print', compact('delivery'));
     }

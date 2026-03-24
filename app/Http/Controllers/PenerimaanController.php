@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PenerimaanExport;
 use App\Models\Anggaran\Budget;
 use App\Models\Anggaran\BudgetTransaction;
 use App\Models\Item;
 use App\Models\Penerimaan;
-use App\Models\PenerimaanDetail;
-use App\Models\Stock; // Import model Transaction
+use App\Models\PenerimaanDetail; // Import model Transaction
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Exports\PenerimaanExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PenerimaanController extends Controller
@@ -136,7 +136,8 @@ class PenerimaanController extends Controller
         $filteredIds = $grandTotalQuery->pluck('id');
 
         $grandTotal = PenerimaanDetail::whereIn('penerimaan_id', $filteredIds)
-            ->sum(DB::raw('qty * harga_satuan'));
+            ->sum(DB::raw('qty * harga_satuan'))
+        ;
 
         // 4. Eksekusi Paginasi
         $penerimaans = $query->paginate(10)->withQueryString();
@@ -149,24 +150,24 @@ class PenerimaanController extends Controller
 
     public function exportExcel(Request $request)
     {
-    $query = Penerimaan::with(['details.item', 'user']);
+        $query = Penerimaan::with(['details.item', 'user']);
 
-    // Terapkan filter yang sama
-    if ($request->filled('start_date')) {
-        $query->whereDate('tanggal', '>=', $request->start_date);
-    }
-    // ... (teruskan filter end_date dan item_id seperti sebelumnya)
+        // Terapkan filter yang sama
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+        // ... (teruskan filter end_date dan item_id seperti sebelumnya)
 
-    $data = $query->get();
+        $data = $query->get();
 
-    // Hitung Grand Total untuk dikirim ke Excel
-    $grandTotal = \App\Models\PenerimaanDetail::whereIn('penerimaan_id', $data->pluck('id'))
-                  ->sum(DB::raw('qty * harga_satuan'));
+        // Hitung Grand Total untuk dikirim ke Excel
+        $grandTotal = PenerimaanDetail::whereIn('penerimaan_id', $data->pluck('id'))
+            ->sum(DB::raw('qty * harga_satuan'))
+        ;
 
-    return \Maatwebsite\Excel\Facades\Excel::download(
-        new \App\Exports\PenerimaanExport($data, $grandTotal),
-        'Laporan_Penerimaan_Barang.xlsx'
-    );
+        return Excel::download(
+            new PenerimaanExport($data, $grandTotal),
+            'Laporan_Penerimaan_Barang.xlsx'
+        );
     }
 }
-
